@@ -1,27 +1,29 @@
-#!/usr/bin/env node
+import { existsSync, readdirSync } from 'fs';
+
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || "0.0.0.0";
+
+console.log(`🚀 Starting server on ${HOST}:${PORT}...`);
+console.log(`📁 Working directory: ${process.cwd()}`);
+
+// Check if build directory exists
+const buildPath = './build';
+if (existsSync(buildPath)) {
+  console.log(`✅ build directory exists`);
+  const files = readdirSync(buildPath);
+  console.log(`build contents: ${files.join(', ')}`);
+} else {
+  console.error(`❌ build directory NOT FOUND at ${buildPath}`);
+  console.log(`Current directory contents:`, readdirSync('.'));
+}
 
 import { createServer } from 'node:http';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || "0.0.0.0";
 const BUILD_DIR = join(__dirname, 'build');
-
-console.log(`🚀 Starting server on ${HOST}:${PORT}...`);
-console.log(`📁 Working directory: ${__dirname}`);
-
-// Check if build directory exists
-if (existsSync(BUILD_DIR)) {
-  console.log(`✅ build directory exists`);
-  const files = readdirSync(BUILD_DIR);
-  console.log(`build contents: ${files.join(', ')}`);
-} else {
-  console.error(`❌ build directory NOT FOUND at ${BUILD_DIR}`);
-  console.log(`Current directory contents:`, readdirSync(__dirname));
-}
 
 const mimeTypes = {
   '.html': 'text/html',
@@ -81,21 +83,6 @@ const server = createServer((req, res) => {
       res.writeHead(500);
       res.end('Server Error');
     }
-  }
-});
-
-// Add readiness check
-server.on('listening', () => {
-  console.log(`✅ Server ready and listening on port ${PORT}`);
-  console.log('🌐 Health check available at /health and /healthz');
-  console.log('📁 Serving static files from:', BUILD_DIR);
-  
-  // Log available files for debugging
-  try {
-    const files = readdirSync(BUILD_DIR);
-    console.log('📋 Available files:', files.join(', '));
-  } catch (err) {
-    console.error('❌ Error reading build directory:', err.message);
   }
 });
 

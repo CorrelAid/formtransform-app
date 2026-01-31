@@ -1,6 +1,3 @@
-# Nixpacks configuration for deploying SvelteKit static site to Coolify
-# Based on working wp_eins configuration
-
 buildImage = 'ghcr.io/railwayapp/nixpacks:latest'
 
 [phases.setup]
@@ -21,12 +18,9 @@ cacheDirectories = [
   "node_modules/.cache"]
 cmds = ["pnpm run build"]
 
-[phases.start]
+[start]
 cmd = "node serve.js"
 
 # Ensure build directory is included in the final image
 [staticAssets]
 "build" = "build"
-
-[variables]
-PORT = "3000"
