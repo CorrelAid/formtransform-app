@@ -39,4 +39,4 @@ coverage/
 
 
 # Lock files (will be installed during build)
-pnpm-lock.yaml
+# pnpm-lock.yaml
