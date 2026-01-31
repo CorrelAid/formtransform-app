@@ -36,8 +36,7 @@ coverage/
 # Misc
 .DS_Store
 
-# Nixpacks cache
-.nixpacks/
+
 
 # Lock files (will be installed during build)
 pnpm-lock.yaml

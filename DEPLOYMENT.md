@@ -150,6 +150,20 @@ If you encounter Nixpacks parsing errors:
 1. Try using the Dockerfile method instead
 2. Check that your Nixpacks version is up to date
 3. Verify the TOML syntax is correct
+4. Ensure `.dockerignore` doesn't exclude `.nixpacks/` directory
+
+### Coolify-specific issues
+If Coolify fails with Nixpacks:
+1. Check that `.dockerignore` allows Nixpacks cache files
+2. Verify Node.js version compatibility (Coolify may force Node.js 22)
+3. Try the Dockerfile method as a fallback
+4. Check Coolify logs for specific error messages about missing files
+
+### Node.js version conflicts
+Coolify may override the Node.js version to 22. If this causes issues:
+1. The configuration tries to force Node.js 20
+2. You can modify `nixpacks.toml` to use Node.js 22 if needed
+3. Test locally with both versions to ensure compatibility
 
 ## Testing Deployment Locally
 
