@@ -154,10 +154,24 @@ If you encounter Nixpacks parsing errors:
 
 ### Coolify-specific issues
 If Coolify fails with Nixpacks:
-1. Check that `.dockerignore` allows Nixpacks cache files
-2. Verify Node.js version compatibility (Coolify may force Node.js 22)
-3. Try the Dockerfile method as a fallback
-4. Check Coolify logs for specific error messages about missing files
+1. **Check that `.dockerignore` allows Nixpacks cache files**
+2. **Verify Node.js version compatibility** (Coolify may force Node.js 22)
+3. **Try the Dockerfile method as a fallback**
+4. **Check Coolify logs for specific error messages** about missing files
+
+### Deployment never completes
+If the deployment shows as "in progress" but never finishes:
+1. **Add health check endpoints** - Ensure `/health` and `/healthz` endpoints are available
+2. **Check server logs** - Verify the server is actually running and listening
+3. **Verify static assets configuration** - Ensure `[staticAssets]` section in `nixpacks.toml`
+4. **Test locally first** - Use `./test-deployment.sh` to verify everything works
+
+### Based on working configuration
+The configuration is now based on a proven working setup from `wp_eins` project:
+- Uses explicit build image: `ghcr.io/railwayapp/nixpacks:latest`
+- Includes proper static assets configuration
+- Better logging and error handling
+- Health check endpoints for monitoring
 
 ### Node.js version conflicts
 Coolify may override the Node.js version to 22. If this causes issues:

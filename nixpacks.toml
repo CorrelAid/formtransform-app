@@ -1,26 +1,32 @@
 # Nixpacks configuration for deploying SvelteKit static site to Coolify
-# https://nixpacks.com/docs/configuration
+# Based on working wp_eins configuration
+
+buildImage = 'ghcr.io/railwayapp/nixpacks:latest'
 
 [phases.setup]
-# Install Node.js and pnpm
 npm = true
 nodeVersion = "20"
-# Force Node.js 20 even if Coolify tries to override
-[phases.setup.environment]
-NODE_VERSION = "20"
 
 [phases.install]
-# Install dependencies using pnpm
-cmds = ["corepack enable", "corepack prepare pnpm@latest --activate", "pnpm install"]
+dependsOn = ["setup"]
+cacheDirectories = [
+  "node_modules",
+  "node_modules/.cache"]
+cmds = ["corepack enable", "corepack prepare pnpm@latest --activate", "pnpm install --frozen-lockfile"]
 
 [phases.build]
-# Build the static site
+dependsOn = ["install"]
+cacheDirectories = [
+  "node_modules",
+  "node_modules/.cache"]
 cmds = ["pnpm run build"]
 
 [phases.start]
-# Use our custom serve script for the built site
-cmds = ["node serve.js"]
+cmd = "node serve.js"
+
+# Ensure build directory is included in the final image
+[staticAssets]
+"build" = "build"
 
 [variables]
-# Coolify will set PORT automatically
 PORT = "3000"
