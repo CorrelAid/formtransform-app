@@ -14,22 +14,10 @@ cmds = ["corepack enable", "corepack prepare pnpm@latest --activate", "pnpm inst
 # Build the static site
 cmds = ["pnpm run build"]
 
-# Configure the static web server
 [phases.start]
 # Use our custom serve script for the built site
 cmds = ["node serve.js"]
 
-# Environment variables
 [variables]
 # Coolify will set PORT automatically
 PORT = "3000"
-
-# Build configuration
-[build]
-# The build directory contains our static files
-buildDir = "build"
-
-# Start configuration
-[start]
-# The start command for the web server
-startCmd = "node serve.js"

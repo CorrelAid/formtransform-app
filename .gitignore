@@ -46,4 +46,4 @@ test-results/
 .nixpacks/
 
 # Docker
-Dockerfile
+.docker/
