@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "pnpm exec playwright test"
+		"test": "bunx playwright test"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.1",

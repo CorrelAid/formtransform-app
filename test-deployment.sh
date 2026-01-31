@@ -9,17 +9,17 @@ echo "🚀 Testing deployment setup..."
 echo "✅ Checking Node.js version..."
 node --version
 
-# Check if pnpm is available
-echo "✅ Checking pnpm version..."
-pnpm --version
+# Check if bun is available
+echo "✅ Checking bun version..."
+bun --version
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-pnpm install
+bun install
 
 # Build the static site
 echo "🔨 Building static site..."
-pnpm run build
+bun run build
 
 # Test the serve script
 echo "🌐 Testing serve script..."
