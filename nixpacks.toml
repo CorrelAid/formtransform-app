@@ -9,14 +9,14 @@ dependsOn = ["setup"]
 cacheDirectories = [
   "node_modules",
   "node_modules/.cache"]
-cmds = ["npm install -g pnpm@9", "pnpm install --frozen-lockfile"]
+cmds = ["npm install -g pnpm@9"]
 
 [phases.build]
 dependsOn = ["install"]
 cacheDirectories = [
   "node_modules",
   "node_modules/.cache"]
-cmds = ["pnpm run build"]
+cmds = ["pnpm install --frozen-lockfile", "pnpm run build"]
 
 [start]
 cmd = "node serve.js"
