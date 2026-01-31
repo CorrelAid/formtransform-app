@@ -9,7 +9,7 @@ dependsOn = ["setup"]
 cacheDirectories = [
   "node_modules",
   "node_modules/.cache"]
-cmds = ["corepack enable", "corepack prepare pnpm@latest --activate", "pnpm install --frozen-lockfile"]
+cmds = ["npm install -g pnpm@9", "pnpm install --frozen-lockfile"]
 
 [phases.build]
 dependsOn = ["install"]
