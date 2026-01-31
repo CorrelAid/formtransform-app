@@ -34,14 +34,12 @@
 
 			// Mock alert if it's not available in the current context (moved from xlsform-converter.js)
 			if (typeof globalThis.alert === 'undefined') {
-				// @ts-expect-error -- xlsform2lstsv uses alert, which is not available in all contexts
 				globalThis.alert = () => {};
 			}
 
 			const arrayBuffer = await file.arrayBuffer(); // Convert File to ArrayBuffer
 
 			// Use the client-side converter directly
-			// @ts-expect-error -- xlsform2lstsv is not typed
 			tsvContent = await XLSFormParser.convertXLSDataToTSV(arrayBuffer); // Pass ArrayBuffer
 
 			// Calculate stats if tsvContent is not null
@@ -206,25 +204,7 @@
 		margin: 0 0 var(--dimension-spacing-md) 0;
 	}
 
-	.info-box {
-		background: var(--color-background-primary);
-		border-left: 4px solid var(--color-primary-darker);
-		padding: var(--dimension-spacing-sm);
-		margin-bottom: var(--dimension-spacing-lg);
-		border-radius: 4px;
-	}
 
-	.info-box h3 {
-		margin: 0 0 var(--dimension-spacing-xs) 0;
-		color: var(--color-primary-darker);
-		font-size: var(--dimension-font-size-small-min);
-	}
-
-	.info-box p {
-		margin: var(--dimension-spacing-xs) 0;
-		font-size: var(--dimension-font-size-small-min);
-		color: var(--color-text-primary);
-	}
 
 	.form-section {
 		display: flex;
@@ -360,50 +340,7 @@
 		color: #555;
 	}
 
-	.type-mapping {
-		margin-top: 2rem;
-		padding-top: 2rem;
-		border-top: 1px solid #eee;
-	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 1rem;
-		font-size: 0.9rem;
-	}
-
-	th,
-	td {
-		padding: 0.75rem;
-		text-align: left;
-		border-bottom: 1px solid #eee;
-	}
-
-	th {
-		background: #f5f5f5;
-		font-weight: 600;
-		color: #333;
-	}
-
-	tr:hover {
-		background: #fafafa;
-	}
-
-	td:first-child {
-		font-family: monospace;
-		color: #d32f2f;
-	}
-
-	td:nth-child(2) {
-		font-family: monospace;
-		color: #1976d2;
-	}
-
-	td:nth-child(3) {
-		color: #666;
-		font-size: 0.85rem;
-	}
 
 	footer {
 		text-align: center;
