@@ -4,7 +4,7 @@ buildImage = 'ghcr.io/railwayapp/nixpacks:latest'
 nixPkgs = ["nodejs_20", "bun"]
 # Bun 1.3.10
 # track latest commit sha: https://github.com/NixOS/nixpkgs/blob/nixpkgs-unstable/pkgs/by-name/bu/bun/package.nix
-nixpkgsArchive = '917fec927f4e4603d5fc817548b06eb4f8de3e55'
+nixpkgsArchive = '3f0336406035444b4a24b942788334af5f906259'
 
 [phases.install]
 dependsOn = ["setup"]
