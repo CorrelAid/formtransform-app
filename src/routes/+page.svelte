@@ -170,11 +170,10 @@
 <style>
 	:global(body) {
 		margin: 0;
-		font-family: var(--typography-body-font-family);
+		font-family: var(--font-family-body);
 		background: var(--color-background-primary);
 		color: var(--color-text-primary);
-		line-height: var(--typography-body-line-height);
-		font-size: var(--dimension-font-size-base);
+		line-height: var(--line-height-relaxed);
 	}
 
 	main {
@@ -185,23 +184,19 @@
 		max-width: var(--dimension-content-max-width);
 		margin: 0 auto;
 		background: var(--color-white);
-		padding: var(--dimension-spacing-lg);
+		padding: var(--spacing-xl);
 		border-radius: 8px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
 
 	h1 {
-		margin: 0 0 var(--dimension-spacing-sm) 0;
+		margin: 0 0 var(--spacing-base) 0;
 		color: var(--color-primary-darker);
-		font-family: var(--typography-heading-h1-font-family);
-		font-size: var(--typography-heading-h1-font-size);
-		font-weight: var(--typography-heading-h1-font-weight);
-		line-height: var(--typography-heading-h1-line-height);
 	}
 
 	.description {
 		color: var(--color-text-primary);
-		margin: 0 0 var(--dimension-spacing-md) 0;
+		margin: 0 0 var(--spacing-lg) 0;
 	}
 
 
@@ -267,7 +262,7 @@
 	.download-btn {
 		background: var(--color-tertiary);
 		color: var(--color-text-primary);
-		margin-bottom: var(--dimension-spacing-sm);
+		margin-bottom: var(--spacing-base);
 	}
 
 	.download-btn:hover {

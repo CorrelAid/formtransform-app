@@ -1,5 +1,7 @@
 <script lang="ts">
-	import '$lib/styles/tokens.css';
+	import '$lib/styles/gen_tokens.css';
+	import '@correlaid/cdl-design/fonts.css';
+	import '@correlaid/cdl-design/typography.css';
 
 	let { children } = $props();
 </script>

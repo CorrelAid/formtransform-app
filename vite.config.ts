@@ -1,13 +1,11 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { cdlTokens } from '@correlaid/cdl-design/vite-plugin';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), cdlTokens()],
 	server: {
-		fs: {
-			allow: ['fonts']
-		},
 		headers: {
 			'Cross-Origin-Opener-Policy': 'same-origin',
 			'Cross-Origin-Embedder-Policy': 'require-corp'
