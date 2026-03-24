@@ -1,5 +1,7 @@
 # FormTransform
 
+[![AI-Assisted](https://img.shields.io/badge/AI--assisted-Claude%20Code-blueviolet?logo=anthropic&logoColor=white)](./AI_DISCLOSURE.md)
+
 A SvelteKit application for transforming forms, powered by Bun.
 
 ## Creating a project
