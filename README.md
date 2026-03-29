@@ -2,27 +2,30 @@
 
 [![AI-Assisted](https://img.shields.io/badge/AI--assisted-Claude%20Code-blueviolet?logo=anthropic&logoColor=white)](./AI_DISCLOSURE.md)
 
-A SvelteKit application for transforming forms, powered by Bun.
+A SvelteKit static site for converting [XLSForm](https://xlsform.org/) questionnaires to the [LimeSurvey TSV format](https://www.limesurvey.org/manual/Tab_Separated_Value_survey_structure).
 
-## Creating a project
+## Prerequisites
 
-If you're seeing this, you've probably already done this step. Congrats!
+- [Bun](https://bun.sh/) (package manager and runtime)
+- [Node.js](https://nodejs.org/) >= 20
 
-```sh
-# create a new project
-bunx sv create my-app
-```
-
-To recreate this project with the same configuration:
+## Setup
 
 ```sh
-# recreate this project
-bunx sv create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" --install bun formtransform
+# Install dependencies
+bun install
+
+# Copy the example env file and fill in values as needed
+cp .env.example .env
 ```
+
+### Environment variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `GITHUB_TOKEN` | No | GitHub personal access token. Avoids API rate limits (60 req/hour unauthenticated) when fetching content snippets during build. |
 
 ## Developing
-
-Once you've created a project and installed dependencies with `bun install`, start a development server:
 
 ```sh
 bun run dev
@@ -33,12 +36,16 @@ bun run dev -- --open
 
 ## Building
 
-To create a production version of your app:
-
 ```sh
 bun run build
 ```
 
-You can preview the production build with `bun run preview`.
+Preview the production build locally:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+bun run preview
+```
+
+## Deployment
+
+The app is deployed via [Coolify](https://coolify.io/) using [nixpacks](https://nixpacks.com/). The `nixpacks.toml` pins the bun version used in the build container.

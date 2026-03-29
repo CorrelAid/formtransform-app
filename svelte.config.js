@@ -3,6 +3,9 @@ import adapter from '@sveltejs/adapter-static';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
+		prerender: {
+			handleHttpError: 'warn'
+		},
 		// adapter-static for static site generation
 		// See https://svelte.dev/docs/kit/adapter-static for more information
 		adapter: adapter({
