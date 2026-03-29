@@ -1,12 +1,23 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { XLSFormParser } from 'xlsform2lstsv'; // New import
+	import { XLSFormParser } from 'xlsform2lstsv';
+	import { locale, t } from '$lib/i18n';
+
+	let { data } = $props();
 
 	let file = $state<File | null>(null);
 	let converting = $state(false);
 	let error = $state<string | null>(null);
 	let tsvContent = $state<string | null>(null);
 	let stats = $state<{ questions: number; groups: number } | null>(null);
+
+	let config = $state({
+		convertWelcomeNote: true,
+		convertEndNote: true,
+		convertOtherPattern: true,
+		convertMarkdown: true,
+		hideNoAnswer: true
+	});
 
 	function handleFileChange(e: Event) {
 		const target = e.target as HTMLInputElement;
@@ -40,7 +51,7 @@
 			const arrayBuffer = await file.arrayBuffer(); // Convert File to ArrayBuffer
 
 			// Use the client-side converter directly
-			tsvContent = await XLSFormParser.convertXLSDataToTSV(arrayBuffer); // Pass ArrayBuffer
+			tsvContent = await XLSFormParser.convertXLSDataToTSV(arrayBuffer, config);
 
 			// Calculate stats if tsvContent is not null
 			if (tsvContent) {
@@ -83,22 +94,20 @@
 </script>
 
 <svelte:head>
-	<title>XLSForm to LimeSurvey TSV Converter</title>
+	<title>{$t('page.title')}</title>
 </svelte:head>
 
 <main>
 	<div class="container">
-		<h1>XLSForm to LimeSurvey TSV Converter</h1>
-		<p class="description">
-			Upload an XLSForm file to convert it to LimeSurvey TSV format for easy import
-		</p>
+		<h1>{$t('page.title')}</h1>
+		<div class="description">{@html data.descriptionHtml[$locale]}</div>
 
 
 
 		<div class="form-section">
 			<div class="file-input-wrapper">
 				<label for="file-input" class="file-label">
-					{file ? file.name : 'Choose XLSForm file (.xlsx, .xls)'}
+					{file ? file.name : $t('page.fileLabel')}
 				</label>
 				<input
 					id="file-input"
@@ -109,48 +118,79 @@
 				/>
 			</div>
 
+			<details class="options-section">
+				<summary>{$t('page.conversionOptions')}</summary>
+				<div class="options-grid">
+					<label class="option">
+						<input type="checkbox" bind:checked={config.convertWelcomeNote} />
+						<div>
+							<strong>{$t('page.convertWelcomeNote')}</strong>
+							<span>{$t('page.convertWelcomeNoteDesc')}</span>
+						</div>
+					</label>
+					<label class="option">
+						<input type="checkbox" bind:checked={config.convertEndNote} />
+						<div>
+							<strong>{$t('page.convertEndNote')}</strong>
+							<span>{$t('page.convertEndNoteDesc')}</span>
+						</div>
+					</label>
+					<label class="option">
+						<input type="checkbox" bind:checked={config.convertOtherPattern} />
+						<div>
+							<strong>{$t('page.convertOtherPattern')}</strong>
+							<span>{$t('page.convertOtherPatternDesc')}</span>
+						</div>
+					</label>
+					<label class="option">
+						<input type="checkbox" bind:checked={config.convertMarkdown} />
+						<div>
+							<strong>{$t('page.convertMarkdown')}</strong>
+							<span>{$t('page.convertMarkdownDesc')}</span>
+						</div>
+					</label>
+					<label class="option">
+						<input type="checkbox" bind:checked={config.hideNoAnswer} />
+						<div>
+							<strong>{$t('page.hideNoAnswer')}</strong>
+							<span>{$t('page.hideNoAnswerDesc')}</span>
+						</div>
+					</label>
+				</div>
+			</details>
+
 			<button onclick={convertForm} disabled={!file || converting} class="convert-btn">
 				{#if converting}
-					Converting...
+					{$t('page.converting')}
 				{:else}
-					Convert to LimeSurvey TSV
+					{$t('page.convert')}
 				{/if}
 			</button>
 		</div>
 
 		{#if error}
 			<div class="error">
-				<strong>Error:</strong>
+				<strong>{$t('page.error')}</strong>
 				{error}
 			</div>
 		{/if}
 
 		{#if tsvContent && stats}
-			<div class="success">
-				<h2>Conversion Successful!</h2>
-				<p class="stats">
-					Converted {stats.questions} question{stats.questions !== 1 ? 's' : ''}
-					{stats.groups > 0 ? `in ${stats.groups} group${stats.groups !== 1 ? 's' : ''}` : ''}
-				</p>
+			<div class="result-box">
+				<div class="result-box-header">
+					<span>{$t('page.result')}</span>
+					<span class="result-stats">
+						{stats.questions} {stats.questions !== 1 ? $t('page.questions') : $t('page.question')}{stats.groups > 0 ? `, ${stats.groups} ${stats.groups !== 1 ? $t('page.groups') : $t('page.group')}` : ''}
+					</span>
+				</div>
+				<div class="result-box-body">
+					<button onclick={downloadTsv} class="download-btn">{$t('page.download')}</button>
 
-				<button onclick={downloadTsv} class="download-btn"> Download TSV (.txt) </button>
-
-				<details>
-					<summary>Preview TSV</summary>
-					<pre class="tsv-preview">{tsvContent}</pre>
-				</details>
-
-				<details class="help-section">
-					<summary>How to import into LimeSurvey</summary>
-					<ol>
-						<li>Download the .txt file above</li>
-						<li>Log in to your LimeSurvey installation</li>
-						<li>Go to <strong>Survey → Import</strong></li>
-						<li>Select <strong>TSV survey structure</strong></li>
-						<li>Upload the downloaded .txt file</li>
-						<li>Review and confirm the import</li>
-					</ol>
-				</details>
+					<details>
+						<summary>{$t('page.previewTsv')}</summary>
+						<pre class="tsv-preview">{tsvContent}</pre>
+					</details>
+				</div>
 			</div>
 		{/if}
 
@@ -158,10 +198,7 @@
 
 		<footer>
 			<p>
-				For current limitations of converting, see
-				<a href="https://github.com/CorrelAid/xlsform2lstsv" target="_blank"
-					>xlsform2lstsv GitHub repository</a
-				>.
+				{$t('page.footerText')} <a href="https://github.com/CorrelAid/xlsform2lstsv" target="_blank">{$t('page.repoLink')}</a> {$t('page.footerSuffix')}
 			</p>
 		</footer>
 	</div>
@@ -184,14 +221,15 @@
 		max-width: var(--dimension-content-max-width);
 		margin: 0 auto;
 		background: var(--color-white);
-		padding: var(--spacing-xl);
-		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		padding: var(--spacing-2xl);
+		border: var(--dimension-border-width) solid var(--color-text-primary);
+		border-radius: var(--radius-xl);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 	}
 
 	h1 {
 		margin: 0 0 var(--spacing-base) 0;
-		color: var(--color-primary-darker);
+		color: var(--color-text-primary);
 	}
 
 	.description {
@@ -222,16 +260,16 @@
 	.file-label {
 		display: block;
 		padding: 1rem;
-		border: 2px dashed #ccc;
-		border-radius: 4px;
+		border: 2px dashed var(--color-primary-darker);
+		border-radius: var(--radius-md);
 		text-align: center;
 		cursor: pointer;
 		transition: all 0.2s;
 	}
 
 	.file-label:hover {
-		border-color: #ff9800;
-		background: #f9f9f9;
+		border-color: var(--color-text-primary);
+		background: #f4f0f3;
 	}
 
 	.convert-btn,
@@ -239,19 +277,21 @@
 		padding: 0.75rem 1.5rem;
 		font-size: 1rem;
 		border: none;
-		border-radius: 4px;
+		border-radius: var(--radius-md);
 		cursor: pointer;
 		transition: all 0.2s;
-		font-weight: 500;
+		font-weight: var(--font-weight-semibold);
 	}
 
 	.convert-btn {
-		background: var(--color-primary);
+		background: var(--color-text-primary);
 		color: var(--color-text-secondary);
+		align-self: flex-start;
+		width: auto;
 	}
 
 	.convert-btn:hover:not(:disabled) {
-		background: var(--color-primary-darker);
+		opacity: 0.9;
 	}
 
 	.convert-btn:disabled {
@@ -260,13 +300,13 @@
 	}
 
 	.download-btn {
-		background: var(--color-tertiary);
-		color: var(--color-text-primary);
+		background: var(--color-text-primary);
+		color: var(--color-text-secondary);
 		margin-bottom: var(--spacing-base);
 	}
 
 	.download-btn:hover {
-		opacity: 0.8; /* Simple hover effect */
+		opacity: 0.9;
 	}
 
 	.error {
@@ -274,27 +314,42 @@
 		background: #ffebee;
 		border-left: 4px solid #f44336;
 		color: #c62828;
-		border-radius: 4px;
+		border-radius: var(--radius-md);
 		margin-bottom: 1rem;
 	}
 
-	.success {
-		padding: 1rem;
-		background: #fff3e0;
-		border-left: 4px solid #ff9800;
-		border-radius: 4px;
+	.result-box {
+		background: var(--color-white);
+		border: var(--dimension-border-width) solid var(--color-secondary);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		box-shadow: inset -8px 0 0 0 var(--color-secondary);
+		font-family: var(--font-family-mono);
 	}
 
-	.success h2 {
-		margin: 0 0 0.5rem 0;
-		color: #e65100;
-		font-size: 1.25rem;
+	.result-box-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem var(--spacing-base);
+		border-bottom: var(--dimension-border-width) solid var(--color-secondary);
+		color: var(--color-secondary);
+		font-weight: 600;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
-	.stats {
+	.result-stats {
+		font-weight: 400;
+		text-transform: none;
+		letter-spacing: normal;
 		color: #666;
-		margin: 0 0 1rem 0;
-		font-size: 0.95rem;
+		font-size: 0.85rem;
+	}
+
+	.result-box-body {
+		padding: var(--spacing-base);
 	}
 
 	details {
@@ -303,14 +358,15 @@
 
 	summary {
 		cursor: pointer;
-		padding: 0.5rem;
-		background: #f5f5f5;
-		border-radius: 4px;
+		padding: 0.5rem var(--spacing-sm);
+		background: #f0f0f5;
+		border-radius: var(--radius-md);
 		font-weight: 500;
+		color: var(--color-text-primary);
 	}
 
 	summary:hover {
-		background: #ececec;
+		background: #e4e0e8;
 	}
 
 	.tsv-preview {
@@ -325,15 +381,43 @@
 		overflow-y: auto;
 	}
 
-	.help-section ol {
-		margin: 1rem 0 0 0;
-		padding-left: 1.5rem;
+	.options-section {
+		margin: 0;
 	}
 
-	.help-section li {
-		margin: 0.5rem 0;
+	.options-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 1rem;
+	}
+
+	.option {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		cursor: pointer;
+	}
+
+	.option input[type='checkbox'] {
+		margin-top: 0.25rem;
+		flex-shrink: 0;
+	}
+
+	.option div {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.option strong {
+		font-size: 0.9rem;
+	}
+
+	.option span {
+		font-size: 0.8rem;
 		color: #555;
 	}
+
 
 
 
@@ -349,7 +433,7 @@
 	}
 
 	footer a {
-		color: #2196f3;
+		color: var(--color-text-primary);
 		text-decoration: underline;
 	}
 

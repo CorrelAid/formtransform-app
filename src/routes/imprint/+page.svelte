@@ -1,43 +1,26 @@
 <script lang="ts">
-	import { page } from "$app/stores";
+	import { locale, t } from '$lib/i18n';
+
+	let { data } = $props();
 </script>
 
 <svelte:head>
-	<title>Imprint & Disclaimer</title>
+	<title>{$t('imprint.title')}</title>
 </svelte:head>
 
 <main class="container">
-	<h1>Imprint & Disclaimer</h1>
-	
+	<a href="/" class="back-link">&larr; {$t('page.title')}</a>
+	<h1>{$t('imprint.title')}</h1>
+
 	<section>
-		<h2>Tool Owner</h2>
-		<p>This XLSForm to LimeSurvey conversion tool is provided by CorrelAid.</p>
-		<p>For organizational information: <a href="https://correlaid.org/en/imprint/" target="_blank" rel="noopener noreferrer">https://correlaid.org/en/imprint/</a></p>
+		<p>
+			{$t('imprint.hostedBy')} <a href="https://correlaid.org" target="_blank" rel="noopener noreferrer">{$t('imprint.correlaid')}</a>{$t('imprint.partOfCdl')} <a href="https://civic-data.de" target="_blank" rel="noopener noreferrer">{$t('imprint.cdl')}</a>.
+			{$t('imprint.referenceText')} <a href="https://civic-data.de/impressum/" target="_blank" rel="noopener noreferrer">civic-data.de/impressum/</a>.
+		</p>
 	</section>
 	
-	<section>
-		<h2>Usage at Your Own Risk</h2>
-		<p>This tool is provided "as is" without any warranties, express or implied. The use of this conversion tool and any resulting files is entirely at your own risk.</p>
-		<p>CorrelAid accepts no liability for:</p>
-		<ul>
-			<li>Data loss or corruption during conversion</li>
-			<li>Errors or incompatibilities in the generated TSV files</li>
-			<li>Any issues arising from importing converted files into LimeSurvey</li>
-			<li>Consequences of using this tool for critical or sensitive surveys</li>
-		</ul>
-		<p>Always thoroughly test converted files in a non-production environment before actual use.</p>
-	</section>
-	
-	<section>
-		<h2>No Guarantee of Functionality</h2>
-		<p>While we strive to maintain this tool, we cannot guarantee its continuous availability, accuracy, or suitability for any particular purpose. The tool may be modified, suspended, or discontinued at any time without notice.</p>
-	</section>
-	
-	<section>
-		<h2>Copyright</h2>
-		<p>© {new Date().getFullYear()} CorrelAid. All rights reserved.</p>
-		<p>The tool and its code are subject to the licenses of their respective components.</p>
-	</section>
+	{@html data.liabilityHtml[$locale]}
+
 </main>
 
 <style>
@@ -67,11 +50,23 @@
 		padding-left: 1.5rem;
 	}
 	
+	.back-link {
+		display: inline-block;
+		margin-bottom: 1rem;
+		color: var(--color-text-primary);
+		text-decoration: none;
+		font-size: 0.9rem;
+	}
+
+	.back-link:hover {
+		text-decoration: underline;
+	}
+
 	a {
 		color: #007bff;
 		text-decoration: none;
 	}
-	
+
 	a:hover {
 		text-decoration: underline;
 	}
