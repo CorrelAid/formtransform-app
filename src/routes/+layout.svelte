@@ -2,12 +2,18 @@
 	import '$lib/styles/gen_tokens.css';
 	import '@correlaid/cdl-design/fonts.css';
 	import '@correlaid/cdl-design/typography.css';
+	import { LanguageSwitcher } from '@correlaid/cdl-design';
 	import { locale, t, type Locale } from '$lib/i18n';
 
 	let { children } = $props();
 
-	function switchLocale(lang: Locale) {
-		locale.set(lang);
+	const locales = [
+		{ code: 'en', label: 'EN' },
+		{ code: 'de', label: 'DE' }
+	];
+
+	function switchLocale(lang: string) {
+		locale.set(lang as Locale);
 	}
 </script>
 
@@ -15,10 +21,7 @@
 </svelte:head>
 
 <div class="app-layout">
-	<div class="lang-switcher">
-		<button class:active={$locale === 'en'} onclick={() => switchLocale('en')}>EN</button>
-		<button class:active={$locale === 'de'} onclick={() => switchLocale('de')}>DE</button>
-	</div>
+	<LanguageSwitcher locales={locales} currentLocale={$locale} onLocaleChange={switchLocale} />
 	<div class="main-content">
 		{@render children()}
 	</div>
@@ -33,42 +36,6 @@
 </div>
 
 <style>
-	.lang-switcher {
-		display: flex;
-		justify-content: flex-end;
-		gap: 0;
-		padding: 0.75rem 1.5rem 0;
-	}
-
-	.lang-switcher button {
-		background: var(--color-white, #fff);
-		border: 1px solid var(--color-text-primary);
-		padding: 0.35rem 0.75rem;
-		cursor: pointer;
-		font-size: 0.85rem;
-		font-weight: 500;
-		color: var(--color-text-primary);
-	}
-
-	.lang-switcher button:first-child {
-		border-radius: 4px 0 0 4px;
-		border-right: none;
-	}
-
-	.lang-switcher button:last-child {
-		border-radius: 0 4px 4px 0;
-	}
-
-	.lang-switcher button:hover {
-		background: #f0ecf0;
-	}
-
-	.lang-switcher button.active {
-		background: var(--color-text-primary);
-		color: var(--color-white, #fff);
-		font-weight: 600;
-	}
-
 	.app-layout {
 		display: flex;
 		flex-direction: column;
