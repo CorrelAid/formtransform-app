@@ -16,11 +16,10 @@ cmds = ["bun install --frozen-lockfile"]
 
 [phases.build]
 dependsOn = ["install"]
-cmds = ["bun run build"]
+cmds = ["rm -rf build .svelte-kit", "bun run build"]
 cacheDirectories = [
   "node_modules",
-  "node_modules/.cache",
-  ".svelte-kit"]
+  "node_modules/.cache"]
 
 [start]
 cmd = "bun serve.js"
