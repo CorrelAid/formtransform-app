@@ -70,8 +70,10 @@ const server = createServer((req, res) => {
     res.end(content);
   } catch (err) {
     if (err.code === 'ENOENT' || err.code === 'EISDIR') {
+      const ext = extname(filePath);
+
       // If no extension, try adding .html for SvelteKit prerendered pages
-      if (!extname(filePath)) {
+      if (!ext) {
         try {
           const htmlPath = filePath + '.html';
           const htmlContent = readFileSync(htmlPath);
@@ -81,6 +83,14 @@ const server = createServer((req, res) => {
         } catch (htmlErr) {
           // Fall through to index.html fallback
         }
+      }
+
+      // Only serve index.html fallback for page navigation (not for assets like JS/CSS/images)
+      const assetExtensions = ['.js', '.css', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.otf', '.ico', '.txt'];
+      if (ext && assetExtensions.includes(ext)) {
+        res.writeHead(404);
+        res.end('Not Found');
+        return;
       }
 
       // Try to serve index.html for SPA routing
