@@ -53,7 +53,7 @@ const server = createServer((req, res) => {
   }
 
   let filePath = join(BUILD_DIR, req.url === '/' ? 'index.html' : req.url);
-  
+
   // Security check to prevent directory traversal
   if (!filePath.startsWith(BUILD_DIR)) {
     res.writeHead(403);
@@ -65,11 +65,24 @@ const server = createServer((req, res) => {
     const ext = extname(filePath);
     const contentType = mimeTypes[ext] || 'application/octet-stream';
     const content = readFileSync(filePath);
-    
+
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(content);
   } catch (err) {
-    if (err.code === 'ENOENT') {
+    if (err.code === 'ENOENT' || err.code === 'EISDIR') {
+      // If no extension, try adding .html for SvelteKit prerendered pages
+      if (!extname(filePath)) {
+        try {
+          const htmlPath = filePath + '.html';
+          const htmlContent = readFileSync(htmlPath);
+          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.end(htmlContent);
+          return;
+        } catch (htmlErr) {
+          // Fall through to index.html fallback
+        }
+      }
+
       // Try to serve index.html for SPA routing
       try {
         const indexContent = readFileSync(join(BUILD_DIR, 'index.html'));
