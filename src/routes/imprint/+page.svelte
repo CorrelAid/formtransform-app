@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { locale, t } from '$lib/i18n';
-
-	let { data } = $props();
+	import { content } from 'virtual:cdl-content';
 </script>
 
 <svelte:head>
@@ -19,7 +18,7 @@
 		</p>
 	</section>
 	
-	{@html data.liabilityHtml[$locale]}
+	{@html content.liability[$locale]}
 
 </main>
 

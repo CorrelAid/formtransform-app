@@ -2,8 +2,7 @@
 	import { browser } from '$app/environment';
 	import { XLSFormParser } from 'xlsform2lstsv';
 	import { locale, t } from '$lib/i18n';
-
-	let { data } = $props();
+	import { content } from 'virtual:cdl-content';
 
 	let file = $state<File | null>(null);
 	let converting = $state(false);
@@ -100,7 +99,7 @@
 <main>
 	<div class="container">
 		<h1>{$t('page.title')}</h1>
-		<div class="description">{@html data.descriptionHtml[$locale]}</div>
+		<div class="description">{@html content.formtransform[$locale]}</div>
 
 
 
