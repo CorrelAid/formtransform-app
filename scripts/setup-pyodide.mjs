@@ -1,17 +1,25 @@
 #!/usr/bin/env node
-// Stage Pyodide + survey2ddi wheel into static/ for offline/local loading.
-import { mkdirSync, copyFileSync, existsSync, createWriteStream } from 'node:fs';
+// Stage Pyodide core (static/pyodide) + survey2ddi wheel (src/lib/wheels)
+// using versions pinned in pyodide.config.json. Wheel URL is resolved
+// dynamically from PyPI to avoid hardcoding hashed CDN paths.
+import {
+	mkdirSync,
+	copyFileSync,
+	existsSync,
+	readdirSync,
+	unlinkSync,
+	writeFileSync,
+	readFileSync
+} from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const config = JSON.parse(readFileSync(join(root, 'pyodide.config.json'), 'utf8'));
+
 const pyodideSrc = join(root, 'node_modules', 'pyodide');
 const pyodideDst = join(root, 'static', 'pyodide');
-const wheelsDst = join(root, 'static', 'wheels');
-
-const WHEEL_URL =
-	'https://files.pythonhosted.org/packages/a4/5b/a507db74bd867af0f60a18da040949cc24b2623df42d034f1237a7612839/survey2ddi-0.3.0-py3-none-any.whl';
-const WHEEL_NAME = 'survey2ddi-0.3.0-py3-none-any.whl';
+const wheelsDst = join(root, 'src', 'lib', 'wheels');
 
 const PYODIDE_FILES = [
 	'pyodide.js',
@@ -33,21 +41,34 @@ mkdirSync(wheelsDst, { recursive: true });
 for (const f of PYODIDE_FILES) {
 	copyFileSync(join(pyodideSrc, f), join(pyodideDst, f));
 }
-console.log(`[setup-pyodide] copied ${PYODIDE_FILES.length} files → static/pyodide/`);
+console.log(
+	`[setup-pyodide] copied ${PYODIDE_FILES.length} Pyodide ${config.pyodideVersion} files → static/pyodide/`
+);
 
-const wheelPath = join(wheelsDst, WHEEL_NAME);
+const wheelName = `survey2ddi-${config.survey2ddiVersion}-py3-none-any.whl`;
+const wheelPath = join(wheelsDst, wheelName);
+
 if (existsSync(wheelPath)) {
-	console.log(`[setup-pyodide] wheel cached: ${WHEEL_NAME}`);
+	console.log(`[setup-pyodide] wheel cached: ${wheelName}`);
 } else {
-	console.log(`[setup-pyodide] downloading ${WHEEL_NAME}…`);
-	const res = await fetch(WHEEL_URL);
-	if (!res.ok) {
-		console.error(`[setup-pyodide] failed: ${res.status}`);
-		process.exit(1);
+	for (const f of readdirSync(wheelsDst)) {
+		if (f.startsWith('survey2ddi-') && f.endsWith('.whl')) {
+			unlinkSync(join(wheelsDst, f));
+			console.log(`[setup-pyodide] removed stale ${f}`);
+		}
 	}
-	const buf = Buffer.from(await res.arrayBuffer());
-	const out = createWriteStream(wheelPath);
-	out.write(buf);
-	out.end();
-	console.log(`[setup-pyodide] saved → static/wheels/${WHEEL_NAME}`);
+
+	const pypiUrl = `https://pypi.org/pypi/survey2ddi/${config.survey2ddiVersion}/json`;
+	console.log(`[setup-pyodide] resolving wheel from ${pypiUrl}`);
+	const meta = await fetch(pypiUrl).then((r) => {
+		if (!r.ok) throw new Error(`PyPI ${r.status}`);
+		return r.json();
+	});
+	const wheel = meta.urls.find((u) => u.packagetype === 'bdist_wheel');
+	if (!wheel) throw new Error('no bdist_wheel on PyPI');
+
+	console.log(`[setup-pyodide] downloading ${wheelName}…`);
+	const buf = Buffer.from(await fetch(wheel.url).then((r) => r.arrayBuffer()));
+	writeFileSync(wheelPath, buf);
+	console.log(`[setup-pyodide] saved → src/lib/wheels/${wheelName}`);
 }

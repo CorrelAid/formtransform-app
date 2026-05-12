@@ -48,6 +48,14 @@ const mimeTypes = {
   '.mjs': 'application/javascript'
 };
 
+// Cross-origin isolation enables SharedArrayBuffer + threaded Pyodide.
+// `credentialless` keeps cross-origin loads (jsdelivr CDN) working
+// without those servers having to set Cross-Origin-Resource-Policy.
+const COOP_COEP = {
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Embedder-Policy': 'credentialless'
+};
+
 const server = createServer((req, res) => {
   // Health check endpoint for Coolify
   if (req.url === '/health' || req.url === '/healthz') {
@@ -70,7 +78,7 @@ const server = createServer((req, res) => {
     const contentType = mimeTypes[ext] || 'application/octet-stream';
     const content = readFileSync(filePath);
 
-    res.writeHead(200, { 'Content-Type': contentType });
+    res.writeHead(200, { 'Content-Type': contentType, ...COOP_COEP });
     res.end(content);
   } catch (err) {
     if (err.code === 'ENOENT' || err.code === 'EISDIR') {
@@ -81,7 +89,7 @@ const server = createServer((req, res) => {
         try {
           const htmlPath = filePath + '.html';
           const htmlContent = readFileSync(htmlPath);
-          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.writeHead(200, { 'Content-Type': 'text/html', ...COOP_COEP });
           res.end(htmlContent);
           return;
         } catch (htmlErr) {
@@ -100,7 +108,7 @@ const server = createServer((req, res) => {
       // Try to serve index.html for SPA routing
       try {
         const indexContent = readFileSync(join(BUILD_DIR, 'index.html'));
-        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.writeHead(200, { 'Content-Type': 'text/html', ...COOP_COEP });
         res.end(indexContent);
       } catch (indexErr) {
         res.writeHead(404);

@@ -11,9 +11,9 @@ node_modules/
 /build
 /dist
 
-# Pyodide (generated from node_modules)
+# Pyodide (staged by scripts/setup-pyodide.mjs at install time)
 /static/pyodide
-/static/wheels
+/src/lib/wheels
 
 # OS
 .DS_Store
