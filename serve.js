@@ -41,7 +41,11 @@ const mimeTypes = {
   '.ttf': 'font/ttf',
   '.otf': 'font/otf',
   '.ico': 'image/x-icon',
-  '.txt': 'text/plain'
+  '.txt': 'text/plain',
+  '.wasm': 'application/wasm',
+  '.whl': 'application/octet-stream',
+  '.zip': 'application/zip',
+  '.mjs': 'application/javascript'
 };
 
 const server = createServer((req, res) => {
@@ -86,7 +90,7 @@ const server = createServer((req, res) => {
       }
 
       // Only serve index.html fallback for page navigation (not for assets like JS/CSS/images)
-      const assetExtensions = ['.js', '.css', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.otf', '.ico', '.txt'];
+      const assetExtensions = ['.js', '.css', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.otf', '.ico', '.txt', '.wasm', '.whl', '.zip', '.mjs'];
       if (ext && assetExtensions.includes(ext)) {
         res.writeHead(404);
         res.end('Not Found');
