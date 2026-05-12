@@ -48,7 +48,13 @@ async function ensureReady(id: number): Promise<PyodideInterface> {
 			post(id, { type: 'progress', msg: 'Installing micropip…' });
 			await instance.loadPackage('micropip');
 			post(id, { type: 'progress', msg: 'Installing survey2ddi…' });
-			const wheelAbsUrl = new URL(SURVEY2DDI_WHEEL_URL, self.location.origin).href;
+			// Vite hashes the asset filename, which breaks micropip's PEP-427 parser.
+			// Fetch the bytes, write them to Pyodide's FS under the canonical wheel
+			// name, then install from emfs:.
+			const wheelResp = await fetch(SURVEY2DDI_WHEEL_URL);
+			const wheelBytes = new Uint8Array(await wheelResp.arrayBuffer());
+			const canonicalName = `survey2ddi-${config.survey2ddiVersion}-py3-none-any.whl`;
+			instance.FS.writeFile(`/tmp/${canonicalName}`, wheelBytes);
 			await instance.runPythonAsync(`
 import micropip
 await micropip.install("xlrd>=2.0.2", reinstall=True)
@@ -57,7 +63,7 @@ await micropip.install([
     "httpx",
     "python-dotenv",
 ], keep_going=True)
-await micropip.install("${wheelAbsUrl}")
+await micropip.install("emfs:/tmp/${canonicalName}")
 `);
 			return instance;
 		})().catch((e) => {
