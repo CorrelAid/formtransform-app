@@ -49,7 +49,32 @@ const translations: Record<Locale, Record<string, string>> = {
 		'imprint.partOfCdl': ' within the ',
 		'imprint.cdl': 'Civic Data Lab',
 		'imprint.referenceText': 'For the full imprint, please refer to',
-		'imprint.liability': 'Liability'
+		'imprint.liability': 'Liability',
+
+		// Tabs
+		'tabs.xlsform': 'XLSForm → LimeSurvey TSV',
+		'tabs.kobo': 'Kobo → DDI',
+		'tabs.limesurvey': 'LimeSurvey → DDI',
+
+		// Kobo/LimeSurvey DDI
+		'kobo.hint': 'Upload an XLSForm. CSV export is optional — without it, only DDI metadata is generated.',
+		'kobo.xlsxLabel': 'Choose XLSForm (.xlsx, .xls)',
+		'kobo.csvLabel': 'Choose Kobo CSV export (XML values and headers)',
+		'kobo.advancedOptions': 'Advanced options',
+		'kobo.titleLabel': 'Survey title (override)',
+		'kobo.titleHint': 'Defaults to form_title from the XLSForm settings sheet.',
+		'kobo.titlePlaceholder': 'Leave blank to use form_title',
+		'kobo.required': 'Required',
+		'kobo.optional': 'Optional',
+		'kobo.modeFull': 'Full mode: DDI XML + response CSV',
+		'kobo.modeMetadata': 'Metadata-only mode: DDI XML (no responses)',
+		'kobo.convert': 'Convert to DDI + CSV',
+		'kobo.convertMetadata': 'Generate DDI metadata',
+		'kobo.converting': 'Converting…',
+		'kobo.downloadXml': 'Download DDI XML',
+		'kobo.downloadCsv': 'Download CSV',
+		'kobo.previewXml': 'Preview XML',
+		'kobo.previewCsv': 'Preview CSV'
 	},
 	de: {
 		// Layout
@@ -97,7 +122,32 @@ const translations: Record<Locale, Record<string, string>> = {
 		'imprint.partOfCdl': ', als Teil des',
 		'imprint.cdl': 'Civic Data Lab',
 		'imprint.referenceText': 'Das vollständige Impressum finden Sie unter',
-		'imprint.liability': 'Haftungsausschluss'
+		'imprint.liability': 'Haftungsausschluss',
+
+		// Tabs
+		'tabs.xlsform': 'XLSForm → LimeSurvey TSV',
+		'tabs.kobo': 'Kobo → DDI',
+		'tabs.limesurvey': 'LimeSurvey → DDI',
+
+		// Kobo/LimeSurvey DDI
+		'kobo.hint': 'XLSForm hochladen. CSV-Export ist optional — ohne CSV werden nur DDI-Metadaten erzeugt.',
+		'kobo.xlsxLabel': 'XLSForm wählen (.xlsx, .xls)',
+		'kobo.csvLabel': 'Kobo-CSV-Export wählen (XML-Werte und -Header)',
+		'kobo.advancedOptions': 'Erweiterte Optionen',
+		'kobo.titleLabel': 'Umfragetitel (überschreiben)',
+		'kobo.titleHint': 'Standard: form_title aus dem XLSForm-Settings-Sheet.',
+		'kobo.titlePlaceholder': 'Leer lassen für form_title',
+		'kobo.required': 'Pflicht',
+		'kobo.optional': 'Optional',
+		'kobo.modeFull': 'Vollmodus: DDI-XML + Antwort-CSV',
+		'kobo.modeMetadata': 'Nur-Metadaten-Modus: DDI-XML (keine Antworten)',
+		'kobo.convert': 'In DDI + CSV konvertieren',
+		'kobo.convertMetadata': 'DDI-Metadaten erzeugen',
+		'kobo.converting': 'Konvertiere…',
+		'kobo.downloadXml': 'DDI-XML herunterladen',
+		'kobo.downloadCsv': 'CSV herunterladen',
+		'kobo.previewXml': 'XML-Vorschau',
+		'kobo.previewCsv': 'CSV-Vorschau'
 	}
 };
 

@@ -13,6 +13,7 @@ node_modules/
 
 # Pyodide (generated from node_modules)
 /static/pyodide
+/static/wheels
 
 # OS
 .DS_Store

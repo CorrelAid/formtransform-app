@@ -3,6 +3,9 @@
 	import { XLSFormParser } from 'xlsform2lstsv';
 	import { locale, t } from '$lib/i18n';
 	import { content } from 'virtual:cdl-content';
+	import Kobo2DdiTab from '$lib/components/Kobo2DdiTab.svelte';
+
+	let activeTab = $state<'tsv' | 'kobo' | 'lime'>('tsv');
 
 	let file = $state<File | null>(null);
 	let converting = $state(false);
@@ -101,8 +104,24 @@
 		<h1>{$t('page.title')}</h1>
 		<div class="description">{@html content.formtransform[$locale]}</div>
 
+		<div class="tab-nav" role="tablist">
+			<button
+				role="tab"
+				class:active={activeTab === 'tsv'}
+				aria-selected={activeTab === 'tsv'}
+				onclick={() => (activeTab = 'tsv')}>{$t('tabs.xlsform')}</button
+			>
+			<button
+				role="tab"
+				class:active={activeTab === 'kobo'}
+				aria-selected={activeTab === 'kobo'}
+				onclick={() => (activeTab = 'kobo')}>{$t('tabs.kobo')}</button
+			>
+		</div>
 
-
+		{#if activeTab === 'kobo'}
+			<Kobo2DdiTab />
+		{:else}
 		<div class="form-section">
 			<div class="file-input-wrapper">
 				<label for="file-input" class="file-label">
@@ -174,7 +193,7 @@
 			</div>
 		{/if}
 
-		{#if tsvContent && stats}
+		{#if tsvContent && stats && activeTab === 'tsv'}
 			<div class="result-box">
 				<div class="result-box-header">
 					<span>{$t('page.result')}</span>
@@ -192,14 +211,10 @@
 				</div>
 			</div>
 		{/if}
-
-
-
-		<footer>
-			<p>
+			<p class="tool-credit">
 				{$t('page.footerText')} <a href="https://github.com/CorrelAid/xlsform2lstsv" target="_blank">{$t('page.repoLink')}</a> {$t('page.footerSuffix')}
 			</p>
-		</footer>
+		{/if}
 	</div>
 </main>
 
@@ -237,6 +252,28 @@
 	}
 
 
+
+	.tab-nav {
+		display: flex;
+		gap: 0.5rem;
+		margin: 0 0 var(--spacing-lg) 0;
+		border-bottom: var(--dimension-border-width) solid var(--color-text-primary);
+	}
+	.tab-nav button {
+		padding: 0.5rem 1rem;
+		background: transparent;
+		border: var(--dimension-border-width) solid transparent;
+		border-bottom: none;
+		border-radius: var(--radius-md) var(--radius-md) 0 0;
+		cursor: pointer;
+		font: inherit;
+		color: var(--color-text-primary);
+	}
+	.tab-nav button.active {
+		background: var(--color-white);
+		border-color: var(--color-text-primary);
+		font-weight: var(--font-weight-semibold);
+	}
 
 	.form-section {
 		display: flex;
@@ -420,23 +457,21 @@
 
 
 
-	footer {
+	.tool-credit {
+		margin: 1.5rem 0 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid #eee;
 		text-align: center;
 		color: #555;
-		padding: 2rem 0;
 		font-size: 0.9rem;
 	}
 
-	footer p {
-		margin: 0;
-	}
-
-	footer a {
+	.tool-credit a {
 		color: var(--color-text-primary);
 		text-decoration: underline;
 	}
 
-	footer a:hover {
+	.tool-credit a:hover {
 		opacity: 0.8;
 	}
 </style>
