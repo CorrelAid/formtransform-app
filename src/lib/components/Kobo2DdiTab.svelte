@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { XLSLoader, buildDdiXml } from '@correlaid/formtransform';
+	import {
+		XLSLoader,
+		buildDdiXml,
+		extractVariables,
+		choicesByListFromRows,
+		buildDataCsv
+	} from '@correlaid/formtransform';
 	import { runKobo2Ddi } from '$lib/pyodide';
 	import { t } from '$lib/i18n';
 
@@ -27,6 +33,55 @@
 		error = null;
 	}
 
+	function parseKoboCsv(text: string): Record<string, string>[] {
+		// Mirror the Python worker's delimiter detection: Kobo exports
+		// XML-paths (group/question) in the header line when the file
+		// is `;`-separated, raw names when it's `,`-separated. The
+		// header shape is the signal. UTF-8-BOM is stripped either way.
+		const stripBom = (s: string) => (s.charCodeAt(0) === 0xfeff ? s.slice(1) : s);
+		const split = (line: string) => {
+			const out: string[] = [];
+			let cur = '';
+			let inQuote = false;
+			for (let i = 0; i < line.length; i++) {
+				const c = line[i];
+				if (inQuote) {
+					if (c === '"' && line[i + 1] === '"') {
+						cur += '"';
+						i++;
+					} else if (c === '"') {
+						inQuote = false;
+					} else {
+						cur += c;
+					}
+				} else {
+					if (c === '"') inQuote = true;
+					else if (c === ',') {
+						out.push(cur);
+						cur = '';
+					} else cur += c;
+				}
+			}
+			out.push(cur);
+			return out;
+		};
+		const parse = (sep: string) => {
+			const lines = text.split(/\r?\n/).filter((l) => l.length > 0);
+			if (lines.length < 2) return [];
+			const headers = split(lines[0]).map((h) => stripBom(h));
+			return lines.slice(1).map((line) => {
+				const cells = split(line);
+				const row: Record<string, string> = {};
+				for (let i = 0; i < headers.length; i++) row[headers[i]] = cells[i] ?? '';
+				return row;
+			});
+		};
+		const semi = parse(';');
+		if (semi.length && Object.keys(semi[0]).some((k) => k.includes('/'))) return semi;
+		const comma = parse(',');
+		return comma;
+	}
+
 	async function convert() {
 		if (!xlsxFile || !browser) return;
 		converting = true;
@@ -43,8 +98,16 @@
 				});
 				result = { xml, csv: null };
 			} else {
-				const csv = new Uint8Array(await csvFile!.arrayBuffer());
-				result = await runKobo2Ddi(xlsx, csv, title || 'Survey', (m) => (progress = m));
+				const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx);
+				const submissions = parseKoboCsv(await csvFile!.text());
+				const variables = extractVariables(surveyData, choicesByListFromRows(choicesData));
+				const xml = buildDdiXml(surveyData, choicesData, {
+					assetName: title || undefined,
+					settings: settingsData[0],
+					submissions
+				});
+				const csv = buildDataCsv(variables, submissions);
+				result = { xml, csv };
 			}
 		} catch (e) {
 			error = `${e}`;
