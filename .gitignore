@@ -11,10 +11,6 @@ node_modules/
 /build
 /dist
 
-# Pyodide (staged by scripts/setup-pyodide.mjs at install time)
-/static/pyodide
-/src/lib/wheels
-
 # OS
 .DS_Store
 Thumbs.db

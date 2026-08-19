@@ -66,12 +66,6 @@ function fetchCdlContent(): Plugin {
 
 export default defineConfig({
 	plugins: [sveltekit(), cdlTokens(), fetchCdlContent()],
-	server: {
-		headers: {
-			'Cross-Origin-Opener-Policy': 'same-origin',
-			'Cross-Origin-Embedder-Policy': 'require-corp'
-		}
-	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

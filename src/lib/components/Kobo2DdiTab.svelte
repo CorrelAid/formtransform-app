@@ -7,7 +7,6 @@
 		choicesByListFromRows,
 		buildDataCsv
 	} from '@correlaid/formtransform';
-	import { runKobo2Ddi } from '$lib/pyodide';
 	import { t } from '$lib/i18n';
 
 	let xlsxFile = $state<File | null>(null);
