@@ -46,6 +46,7 @@
   "dependencies": {
     "@correlaid/cdl-design": "github:CorrelAid/cdl-design",
     "@correlaid/formtransform": "github:CorrelAid/formtransform",
+    "marked": "^17.0.5",
     "xlsx": "^0.18.5"
   },
   "trustedDependencies": [

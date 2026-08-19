@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { XLSFormParser } from '@correlaid/formtransform';
+	import { marked } from 'marked';
 	import { locale, t } from '$lib/i18n';
 	import { content } from 'virtual:cdl-content';
 	import Kobo2DdiTab from '$lib/components/Kobo2DdiTab.svelte';
@@ -103,6 +104,12 @@
 	<div class="container">
 		<h1>{$t('page.title')}</h1>
 		<div class="description">{@html content.formtransform[$locale]}</div>
+		<aside class="scope-notice">
+			<p>{@html marked.parse($t('scope.notice'), { async: false })}</p>
+			<a href="https://github.com/CorrelAid/formtransform#supported-xlsform-subset" target="_blank" rel="noopener noreferrer"
+				>{$t('scope.link')}</a
+			>
+		</aside>
 
 		<div class="tab-nav" role="tablist">
 			<button
@@ -249,6 +256,24 @@
 	.description {
 		color: var(--color-text-primary);
 		margin: 0 0 var(--spacing-lg) 0;
+	}
+
+	.scope-notice {
+		margin: 0 0 var(--spacing-lg) 0;
+		padding: var(--spacing-base);
+		border-left: 4px solid var(--color-secondary);
+		background: var(--color-background-primary);
+		border-radius: var(--radius-md);
+		color: var(--color-text-primary);
+		font-size: 0.9rem;
+		line-height: var(--line-height-relaxed);
+	}
+	.scope-notice p {
+		margin: 0 0 var(--spacing-sm) 0;
+	}
+	.scope-notice a {
+		color: var(--color-text-primary);
+		font-weight: var(--font-weight-semibold);
 	}
 
 

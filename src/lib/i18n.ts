@@ -12,6 +12,9 @@ const translations: Record<Locale, Record<string, string>> = {
 		// Main page
 		'page.title': 'FormTransform',
 		'page.description': 'Upload an XLSForm file to convert it to LimeSurvey TSV format.',
+		'scope.notice':
+			'**Scope: the CDL survey ecosystem.** FormTransform is not a general-purpose XLSForm converter. It transforms only the question types, appearances and expression syntax registered in the CDL survey type registry, and it targets the LimeSurvey and DDI conventions used inside the Civic Data Lab. A form using anything outside that subset is rejected rather than converted — the tool refuses instead of guessing.',
+		'scope.link': 'Supported subset',
 		'page.fileLabel': 'Choose XLSForm file (.xlsx, .xls)',
 		'page.conversionOptions': 'Conversion Options',
 		'page.convertWelcomeNote': 'Convert welcome note',
@@ -84,6 +87,9 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.title': 'FormTransform',
 		'page.description':
 			'Laden Sie eine XLSForm-Datei hoch, um sie in das LimeSurvey-TSV-Format zu konvertieren.',
+		'scope.notice':
+			'**Geltungsbereich: das CDL-Umfrage-Ökosystem.** FormTransform ist kein allgemeiner XLSForm-Konverter. Umgewandelt werden ausschließlich die Fragetypen, Darstellungsoptionen und Ausdruckssyntax, die in der CDL-Registry für Umfragetypen erfasst sind; Zielformate sind die LimeSurvey- und DDI-Konventionen des Civic Data Lab. Formulare, die etwas außerhalb dieser Teilmenge verwenden, werden abgelehnt statt konvertiert — das Tool rät nicht.',
+		'scope.link': 'Unterstützte Teilmenge',
 		'page.fileLabel': 'XLSForm-Datei auswählen (.xlsx, .xls)',
 		'page.conversionOptions': 'Konvertierungsoptionen',
 		'page.convertWelcomeNote': 'Begrüßungsnotiz konvertieren',
