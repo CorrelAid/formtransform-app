@@ -49,7 +49,7 @@
 
     "@correlaid/cdl-design": ["@correlaid/cdl-design@github:CorrelAid/cdl-design#5cc4aed", { "dependencies": { "@sveltejs/kit": "^2.50.2", "@sveltejs/package": "^2.5.7", "@sveltejs/vite-plugin-svelte": "^6.2.4", "@terrazzo/parser": "^0.5.0", "@terrazzo/plugin-css": "^0.5.0", "svelte": "^5.0.0", "typescript": "^5.9.3", "vite": "^7.3.1" }, "peerDependencies": { "shiki": "^3.0.0", "svelte": "^5.0.0" } }, "CorrelAid-cdl-design-5cc4aed", "sha512-f1rqvRaO8l01xazQJA6o0uVYrJL9AK15YHp42SixQ6bqwUoiTd5AVPYDXEnUfB0DsnZIwDYfAs/glTbxloiA7w=="],
 
-    "@correlaid/formtransform": ["@correlaid/formtransform@github:CorrelAid/formtransform#542badc", { "dependencies": { "js-xpath": "0.0.4", "marked": "^17.0.5", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "bin": { "formtransform": "dist/cli.js" } }, "CorrelAid-formtransform-542badc", "sha512-b+8gZE5qgWaLLllgAaMEai1xP/0zKOXijuLRW5kTkS0DvOvlk6qwGZaoRBWmvIGjdva7yr0bYYm6jdXW0YoBmA=="],
+    "@correlaid/formtransform": ["@correlaid/formtransform@github:CorrelAid/formtransform#f26b07f", { "dependencies": { "js-xpath": "0.0.4", "marked": "^17.0.5", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "bin": { "formtransform": "dist/cli.js" } }, "CorrelAid-formtransform-f26b07f", "sha512-KajGWpA6F50vxTGpO6ZH5SECjSWPJD2r5hED5ePbpYcgf9oRiQBU2KL5GsNd1xXsi18+oJ4IsZ2S1+YEZlK2Dg=="],
 
     "@cspotcode/source-map-support": ["@cspotcode/source-map-support@0.8.1", "", { "dependencies": { "@jridgewell/trace-mapping": "0.3.9" } }, "sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw=="],
 
