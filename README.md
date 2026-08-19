@@ -4,7 +4,7 @@
 
 A SvelteKit static site offering two browser-side conversion tools:
 
-1. **XLSForm → LimeSurvey TSV** — convert [XLSForm](https://xlsform.org/) questionnaires to the [LimeSurvey TSV format](https://www.limesurvey.org/manual/Tab_Separated_Value_survey_structure). Powered by [xlsform2lstsv](https://github.com/CorrelAid/xlsform2lstsv).
+1. **XLSForm → LimeSurvey TSV** — convert [XLSForm](https://xlsform.org/) questionnaires to the [LimeSurvey TSV format](https://www.limesurvey.org/manual/Tab_Separated_Value_survey_structure). Powered by [@correlaid/formtransform](https://github.com/CorrelAid/formtransform).
 2. **Kobo → DDI** — emit DDI-Codebook 2.5 XML (and optional response CSV) from an XLSForm plus a raw KoboToolbox CSV export. Metadata-only mode supported (XLSForm alone). Powered by [survey2ddi](https://github.com/CorrelAid/survey2ddi) running in the browser via [Pyodide](https://pyodide.org/) (CPython compiled to WebAssembly).
 
 The app is 100% client-side. No data leaves the browser.

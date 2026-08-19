@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { XLSFormParser } from 'xlsform2lstsv';
+	import { XLSFormParser } from '@correlaid/formtransform';
 	import { locale, t } from '$lib/i18n';
 	import { content } from 'virtual:cdl-content';
 	import Kobo2DdiTab from '$lib/components/Kobo2DdiTab.svelte';
@@ -212,7 +212,7 @@
 			</div>
 		{/if}
 			<p class="tool-credit">
-				{$t('page.footerText')} <a href="https://github.com/CorrelAid/xlsform2lstsv" target="_blank">{$t('page.repoLink')}</a> {$t('page.footerSuffix')}
+				{$t('page.footerText')} <a href="https://github.com/CorrelAid/formtransform" target="_blank">{$t('page.repoLink')}</a> {$t('page.footerSuffix')}
 			</p>
 		{/if}
 	</div>

@@ -38,9 +38,9 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.groups': 'groups',
 		'page.download': 'Download TSV (.txt)',
 		'page.previewTsv': 'Preview TSV',
-		'page.footerText': 'This tool is based on the',
-		'page.repoLink': 'xlsform2lstsv',
-		'page.footerSuffix': 'package. For limitations and supported functionality, see the repository.',
+		'page.footerText': 'This tool is based on',
+		'page.repoLink': '@correlaid/formtransform',
+		'page.footerSuffix': '. For limitations and supported functionality, see the repository.',
 
 		// Imprint page
 		'imprint.title': 'Imprint',
@@ -111,9 +111,9 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.groups': 'Gruppen',
 		'page.download': 'TSV herunterladen (.txt)',
 		'page.previewTsv': 'TSV-Vorschau',
-		'page.footerText': 'Dieses Tool basiert auf dem',
-		'page.repoLink': 'xlsform2lstsv',
-		'page.footerSuffix': 'Paket. Einschränkungen und unterstützte Funktionen sind im Repository dokumentiert.',
+		'page.footerText': 'Dieses Tool basiert auf',
+		'page.repoLink': '@correlaid/formtransform',
+		'page.footerSuffix': '. Einschränkungen und unterstützte Funktionen sind im Repository dokumentiert.',
 
 		// Imprint page
 		'imprint.title': 'Impressum',
