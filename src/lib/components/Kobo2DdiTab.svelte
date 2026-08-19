@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { XLSLoader, buildDdiXml } from '@correlaid/formtransform';
 	import { runKobo2Ddi } from '$lib/pyodide';
 	import { t } from '$lib/i18n';
 
@@ -34,8 +35,17 @@
 		progress = null;
 		try {
 			const xlsx = new Uint8Array(await xlsxFile.arrayBuffer());
-			const csv = csvFile ? new Uint8Array(await csvFile.arrayBuffer()) : null;
-			result = await runKobo2Ddi(xlsx, csv, title || 'Survey', (m) => (progress = m));
+			if (mode === 'metadata') {
+				const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx);
+				const xml = buildDdiXml(surveyData, choicesData, {
+					assetName: title || undefined,
+					settings: settingsData[0]
+				});
+				result = { xml, csv: null };
+			} else {
+				const csv = new Uint8Array(await csvFile!.arrayBuffer());
+				result = await runKobo2Ddi(xlsx, csv, title || 'Survey', (m) => (progress = m));
+			}
 		} catch (e) {
 			error = `${e}`;
 			console.error(e);
@@ -138,7 +148,7 @@
 
 <p class="tool-credit">
 	{$t('page.footerText')}
-	<a href="https://github.com/CorrelAid/survey2ddi" target="_blank">survey2ddi</a>
+	<a href="https://github.com/CorrelAid/formtransform" target="_blank">@correlaid/formtransform</a>
 	{$t('page.footerSuffix')}
 </p>
 
