@@ -5,6 +5,7 @@
 	import { locale, t } from '$lib/i18n';
 	import { content } from 'virtual:cdl-content';
 	import Kobo2DdiTab from '$lib/components/Kobo2DdiTab.svelte';
+	import Lstsv2DdiTab from '$lib/components/Lstsv2DdiTab.svelte';
 
 	let activeTab = $state<'tsv' | 'kobo' | 'lime'>('tsv');
 
@@ -124,10 +125,18 @@
 				aria-selected={activeTab === 'kobo'}
 				onclick={() => (activeTab = 'kobo')}>{$t('tabs.kobo')}</button
 			>
+			<button
+				role="tab"
+				class:active={activeTab === 'lime'}
+				aria-selected={activeTab === 'lime'}
+				onclick={() => (activeTab = 'lime')}>{$t('tabs.limesurvey')}</button
+			>
 		</div>
 
 		{#if activeTab === 'kobo'}
 			<Kobo2DdiTab />
+		{:else if activeTab === 'lime'}
+			<Lstsv2DdiTab />
 		{:else}
 		<div class="form-section">
 			<div class="file-input-wrapper">

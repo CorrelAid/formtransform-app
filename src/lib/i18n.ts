@@ -77,7 +77,20 @@ const translations: Record<Locale, Record<string, string>> = {
 		'kobo.downloadXml': 'Download DDI XML',
 		'kobo.downloadCsv': 'Download CSV',
 		'kobo.previewXml': 'Preview XML',
-		'kobo.previewCsv': 'Preview CSV'
+		'kobo.previewCsv': 'Preview CSV',
+
+		// LimeSurvey → DDI
+		'lime.hint':
+			'Upload a LimeSurvey structure TSV (the same format the XLSForm → TSV tab produces, or what LimeSurvey exports as a .txt survey-structure file). Optional title override; the TSV’s own surveyls_title row is used when blank.',
+		'lime.fileLabel': 'Choose LimeSurvey structure TSV (.txt, .tsv)',
+		'lime.advancedOptions': 'Advanced options',
+		'lime.titleLabel': 'Survey title (override)',
+		'lime.titleHint': 'Defaults to the surveyls_title row in the TSV.',
+		'lime.titlePlaceholder': 'Leave blank to use the TSV’s title',
+		'lime.convert': 'Generate DDI metadata',
+		'lime.converting': 'Converting…',
+		'lime.downloadXml': 'Download DDI XML',
+		'lime.previewXml': 'Preview XML'
 	},
 	de: {
 		// Layout
@@ -153,7 +166,20 @@ const translations: Record<Locale, Record<string, string>> = {
 		'kobo.downloadXml': 'DDI-XML herunterladen',
 		'kobo.downloadCsv': 'CSV herunterladen',
 		'kobo.previewXml': 'XML-Vorschau',
-		'kobo.previewCsv': 'CSV-Vorschau'
+		'kobo.previewCsv': 'CSV-Vorschau',
+
+		// LimeSurvey → DDI
+		'lime.hint':
+			'LimeSurvey-Strukturdatei (TSV) hochladen — dasselbe Format, das der XLSForm-→-TSV-Tab erzeugt, oder der Export aus LimeSurvey als .txt-Strukturdatei. Optionaler Titel-Override; bei leerem Feld wird die surveyls_title-Zeile der TSV verwendet.',
+		'lime.fileLabel': 'LimeSurvey-Strukturdatei wählen (.txt, .tsv)',
+		'lime.advancedOptions': 'Erweiterte Optionen',
+		'lime.titleLabel': 'Umfragetitel (überschreiben)',
+		'lime.titleHint': 'Standard: die surveyls_title-Zeile in der TSV.',
+		'lime.titlePlaceholder': 'Leer lassen, um den TSV-Titel zu verwenden',
+		'lime.convert': 'DDI-Metadaten erzeugen',
+		'lime.converting': 'Konvertiere…',
+		'lime.downloadXml': 'DDI-XML herunterladen',
+		'lime.previewXml': 'XML-Vorschau'
 	}
 };
 

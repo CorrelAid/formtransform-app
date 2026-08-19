@@ -113,47 +113,16 @@ else:
 	return { xml, csv: csvOut };
 }
 
-async function runLimesurvey(
-	id: number,
-	xlsx: Uint8Array,
-	csv: Uint8Array,
-	title: string
-): Promise<{ xml: string; csv: string }> {
-	const p = await ensureReady(id);
-	post(id, { type: 'progress', msg: 'Transforming…' });
-	p.FS.writeFile('/tmp/form.xlsx', xlsx);
-	p.FS.writeFile('/tmp/data.csv', csv);
-	p.globals.set('S2D_TITLE', title);
-	await p.runPythonAsync(`
-import csv
-from pathlib import Path
-from limesurvey2ddi.transform import build_ddi_xml, build_data_csv
-
-with open('/tmp/data.csv', encoding='utf-8-sig') as f:
-    responses = list(csv.DictReader(f, delimiter=';'))
-    if not responses or not any('[' in k or k.lower() == 'id' for k in responses[0].keys()):
-        f.seek(0)
-        responses = list(csv.DictReader(f, delimiter=','))
-
-_xml = build_ddi_xml(S2D_TITLE, Path('/tmp/form.xlsx'), responses, dataset_filename='data.csv')
-_csv = build_data_csv(Path('/tmp/form.xlsx'), responses)
-`);
-	const xml = (await p.runPythonAsync('_xml')) as string;
-	const csvOut = (await p.runPythonAsync('_csv')) as string;
-	return { xml, csv: csvOut };
-}
-
 self.onmessage = async (e: MessageEvent) => {
 	const { id, cmd, xlsx, csv, title } = e.data as {
 		id: number;
-		cmd: 'kobo' | 'limesurvey';
+		cmd: 'kobo';
 		xlsx: Uint8Array;
 		csv: Uint8Array | null;
 		title: string;
 	};
 	try {
-		const result =
-			cmd === 'kobo' ? await runKobo(id, xlsx, csv, title) : await runLimesurvey(id, xlsx, csv!, title);
+		const result = await runKobo(id, xlsx, csv, title);
 		post(id, { type: 'result', result });
 	} catch (err) {
 		post(id, { type: 'error', error: String(err) });

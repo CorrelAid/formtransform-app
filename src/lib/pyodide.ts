@@ -36,7 +36,7 @@ function getWorker(): Worker {
 }
 
 function call<T>(
-	cmd: 'kobo' | 'limesurvey',
+	cmd: 'kobo',
 	xlsx: Uint8Array,
 	csv: Uint8Array | null,
 	title: string,
@@ -56,13 +56,4 @@ export function runKobo2Ddi(
 	onProgress?: ProgressFn
 ): Promise<{ xml: string; csv: string | null }> {
 	return call('kobo', xlsxBytes, csvBytes, titleOverride, onProgress);
-}
-
-export function runLimesurvey2Ddi(
-	xlsxBytes: Uint8Array,
-	csvBytes: Uint8Array,
-	title: string,
-	onProgress?: ProgressFn
-): Promise<{ xml: string; csv: string }> {
-	return call('limesurvey', xlsxBytes, csvBytes, title, onProgress);
 }
