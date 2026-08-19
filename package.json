@@ -1,5 +1,5 @@
 {
-  "name": "formtransform",
+  "name": "formtransform-app",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -45,8 +45,12 @@
   },
   "dependencies": {
     "@correlaid/cdl-design": "github:CorrelAid/cdl-design",
+    "@correlaid/formtransform": "github:CorrelAid/formtransform",
     "js-xpath": "https://codeload.github.com/jstet/js-xpath/tar.gz/6b73563d7ab5a4d2915fda2cbb06722af581c242",
     "xlsform2lstsv": "0.3.0",
     "xlsx": "^0.18.5"
-  }
+  },
+  "trustedDependencies": [
+    "@correlaid/formtransform"
+  ]
 }
