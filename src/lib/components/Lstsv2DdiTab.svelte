@@ -86,7 +86,10 @@
 	<div class="result-box">
 		<div class="result-box-header"><span>{$t('page.result')}</span></div>
 		<div class="result-box-body">
-			<button class="download-btn" onclick={() => download(result!.xml, 'survey.xml', 'application/xml')}>
+			<button
+				class="download-btn"
+				onclick={() => download(result!.xml, 'survey.xml', 'application/xml')}
+			>
 				{$t('lime.downloadXml')}
 			</button>
 			<details>

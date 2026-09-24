@@ -29,7 +29,8 @@ function fetchCdlContent(): Plugin {
 			);
 			if (!res.ok) {
 				console.warn(`[cdl-content] Failed to fetch ${path}: ${res.status}`);
-				if (!process.env.GITHUB_TOKEN) console.warn('[cdl-content] GITHUB_TOKEN not set — you may hit rate limits');
+				if (!process.env.GITHUB_TOKEN)
+					console.warn('[cdl-content] GITHUB_TOKEN not set — you may hit rate limits');
 				return '';
 			}
 			return res.text();

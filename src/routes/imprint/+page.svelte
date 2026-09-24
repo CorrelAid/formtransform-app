@@ -13,13 +13,21 @@
 
 	<section>
 		<p>
-			{$t('imprint.hostedBy')} <a href="https://correlaid.org" target="_blank" rel="noopener noreferrer">{$t('imprint.correlaid')}</a>{$t('imprint.partOfCdl')} <a href="https://civic-data.de" target="_blank" rel="noopener noreferrer">{$t('imprint.cdl')}</a>.
-			{$t('imprint.referenceText')} <a href="https://civic-data.de/impressum/" target="_blank" rel="noopener noreferrer">civic-data.de/impressum/</a>.
+			{$t('imprint.hostedBy')}
+			<a href="https://correlaid.org" target="_blank" rel="noopener noreferrer"
+				>{$t('imprint.correlaid')}</a
+			>{$t('imprint.partOfCdl')}
+			<a href="https://civic-data.de" target="_blank" rel="noopener noreferrer"
+				>{$t('imprint.cdl')}</a
+			>.
+			{$t('imprint.referenceText')}
+			<a href="https://civic-data.de/impressum/" target="_blank" rel="noopener noreferrer"
+				>civic-data.de/impressum/</a
+			>.
 		</p>
 	</section>
-	
-	{@html content.liability[$locale]}
 
+	{@html content.liability[$locale]}
 </main>
 
 <style>
@@ -28,27 +36,28 @@
 		margin: 0 auto;
 		padding: 2rem;
 	}
-	
+
 	h1 {
 		font-size: 2rem;
 		margin-bottom: 2rem;
 	}
-	
+
 	h2 {
 		font-size: 1.5rem;
 		margin-top: 2rem;
 		margin-bottom: 1rem;
 	}
-	
-	p, ul {
+
+	p,
+	ul {
 		margin-bottom: 1rem;
 		line-height: 1.6;
 	}
-	
+
 	ul {
 		padding-left: 1.5rem;
 	}
-	
+
 	.back-link {
 		display: inline-block;
 		margin-bottom: 1rem;

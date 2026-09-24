@@ -108,8 +108,10 @@
 		<div class="description">{@html content.formtransform[$locale]}</div>
 		<aside class="scope-notice">
 			<p>{@html marked.parse($t('scope.notice'), { async: false })}</p>
-			<a href="https://github.com/CorrelAid/formtransform#supported-xlsform-subset" target="_blank" rel="noopener noreferrer"
-				>{$t('scope.link')}</a
+			<a
+				href="https://github.com/CorrelAid/formtransform#supported-xlsform-subset"
+				target="_blank"
+				rel="noopener noreferrer">{$t('scope.link')}</a
 			>
 		</aside>
 
@@ -139,104 +141,111 @@
 		{:else if activeTab === 'lime'}
 			<Lstsv2DdiTab />
 		{:else}
-		<div class="form-section">
-			<div class="file-input-wrapper">
-				<label for="file-input" class="file-label">
-					{file ? file.name : $t('page.fileLabel')}
-				</label>
-				<input
-					id="file-input"
-					type="file"
-					accept=".xlsx,.xls"
-					onchange={handleFileChange}
-					disabled={converting}
-				/>
+			<div class="form-section">
+				<div class="file-input-wrapper">
+					<label for="file-input" class="file-label">
+						{file ? file.name : $t('page.fileLabel')}
+					</label>
+					<input
+						id="file-input"
+						type="file"
+						accept=".xlsx,.xls"
+						onchange={handleFileChange}
+						disabled={converting}
+					/>
+				</div>
+
+				<details class="options-section">
+					<summary>{$t('page.conversionOptions')}</summary>
+					<div class="options-grid">
+						<label class="option">
+							<input type="checkbox" bind:checked={config.convertWelcomeNote} />
+							<div>
+								<strong>{$t('page.convertWelcomeNote')}</strong>
+								<span>{$t('page.convertWelcomeNoteDesc')}</span>
+							</div>
+						</label>
+						<label class="option">
+							<input type="checkbox" bind:checked={config.convertEndNote} />
+							<div>
+								<strong>{$t('page.convertEndNote')}</strong>
+								<span>{$t('page.convertEndNoteDesc')}</span>
+							</div>
+						</label>
+						<label class="option">
+							<input type="checkbox" bind:checked={config.convertOtherPattern} />
+							<div>
+								<strong>{$t('page.convertOtherPattern')}</strong>
+								<span>{$t('page.convertOtherPatternDesc')}</span>
+							</div>
+						</label>
+						<label class="option">
+							<input type="checkbox" bind:checked={config.convertMarkdown} />
+							<div>
+								<strong>{$t('page.convertMarkdown')}</strong>
+								<span>{$t('page.convertMarkdownDesc')}</span>
+							</div>
+						</label>
+						<label class="option">
+							<input type="checkbox" bind:checked={config.hideNoAnswer} />
+							<div>
+								<strong>{$t('page.hideNoAnswer')}</strong>
+								<span>{$t('page.hideNoAnswerDesc')}</span>
+							</div>
+						</label>
+						<label class="option">
+							<input type="checkbox" bind:checked={config.hideQuestionTips} />
+							<div>
+								<strong>{$t('page.hideQuestionTips')}</strong>
+								<span>{$t('page.hideQuestionTipsDesc')}</span>
+							</div>
+						</label>
+					</div>
+				</details>
+
+				<button onclick={convertForm} disabled={!file || converting} class="convert-btn">
+					{#if converting}
+						{$t('page.converting')}
+					{:else}
+						{$t('page.convert')}
+					{/if}
+				</button>
 			</div>
 
-			<details class="options-section">
-				<summary>{$t('page.conversionOptions')}</summary>
-				<div class="options-grid">
-					<label class="option">
-						<input type="checkbox" bind:checked={config.convertWelcomeNote} />
-						<div>
-							<strong>{$t('page.convertWelcomeNote')}</strong>
-							<span>{$t('page.convertWelcomeNoteDesc')}</span>
-						</div>
-					</label>
-					<label class="option">
-						<input type="checkbox" bind:checked={config.convertEndNote} />
-						<div>
-							<strong>{$t('page.convertEndNote')}</strong>
-							<span>{$t('page.convertEndNoteDesc')}</span>
-						</div>
-					</label>
-					<label class="option">
-						<input type="checkbox" bind:checked={config.convertOtherPattern} />
-						<div>
-							<strong>{$t('page.convertOtherPattern')}</strong>
-							<span>{$t('page.convertOtherPatternDesc')}</span>
-						</div>
-					</label>
-					<label class="option">
-						<input type="checkbox" bind:checked={config.convertMarkdown} />
-						<div>
-							<strong>{$t('page.convertMarkdown')}</strong>
-							<span>{$t('page.convertMarkdownDesc')}</span>
-						</div>
-					</label>
-					<label class="option">
-						<input type="checkbox" bind:checked={config.hideNoAnswer} />
-						<div>
-							<strong>{$t('page.hideNoAnswer')}</strong>
-							<span>{$t('page.hideNoAnswerDesc')}</span>
-						</div>
-					</label>
-					<label class="option">
-						<input type="checkbox" bind:checked={config.hideQuestionTips} />
-						<div>
-							<strong>{$t('page.hideQuestionTips')}</strong>
-							<span>{$t('page.hideQuestionTipsDesc')}</span>
-						</div>
-					</label>
+			{#if error}
+				<div class="error">
+					<strong>{$t('page.error')}</strong>
+					{error}
 				</div>
-			</details>
+			{/if}
 
-			<button onclick={convertForm} disabled={!file || converting} class="convert-btn">
-				{#if converting}
-					{$t('page.converting')}
-				{:else}
-					{$t('page.convert')}
-				{/if}
-			</button>
-		</div>
+			{#if tsvContent && stats && activeTab === 'tsv'}
+				<div class="result-box">
+					<div class="result-box-header">
+						<span>{$t('page.result')}</span>
+						<span class="result-stats">
+							{stats.questions}
+							{stats.questions !== 1 ? $t('page.questions') : $t('page.question')}{stats.groups > 0
+								? `, ${stats.groups} ${stats.groups !== 1 ? $t('page.groups') : $t('page.group')}`
+								: ''}
+						</span>
+					</div>
+					<div class="result-box-body">
+						<button onclick={downloadTsv} class="download-btn">{$t('page.download')}</button>
 
-		{#if error}
-			<div class="error">
-				<strong>{$t('page.error')}</strong>
-				{error}
-			</div>
-		{/if}
-
-		{#if tsvContent && stats && activeTab === 'tsv'}
-			<div class="result-box">
-				<div class="result-box-header">
-					<span>{$t('page.result')}</span>
-					<span class="result-stats">
-						{stats.questions} {stats.questions !== 1 ? $t('page.questions') : $t('page.question')}{stats.groups > 0 ? `, ${stats.groups} ${stats.groups !== 1 ? $t('page.groups') : $t('page.group')}` : ''}
-					</span>
+						<details>
+							<summary>{$t('page.previewTsv')}</summary>
+							<pre class="tsv-preview">{tsvContent}</pre>
+						</details>
+					</div>
 				</div>
-				<div class="result-box-body">
-					<button onclick={downloadTsv} class="download-btn">{$t('page.download')}</button>
-
-					<details>
-						<summary>{$t('page.previewTsv')}</summary>
-						<pre class="tsv-preview">{tsvContent}</pre>
-					</details>
-				</div>
-			</div>
-		{/if}
+			{/if}
 			<p class="tool-credit">
-				{$t('page.footerText')} <a href="https://github.com/CorrelAid/formtransform" target="_blank">{$t('page.repoLink')}</a> {$t('page.footerSuffix')}
+				{$t('page.footerText')}
+				<a href="https://github.com/CorrelAid/formtransform" target="_blank"
+					>{$t('page.repoLink')}</a
+				>
+				{$t('page.footerSuffix')}
 			</p>
 		{/if}
 	</div>
@@ -292,8 +301,6 @@
 		color: var(--color-text-primary);
 		font-weight: var(--font-weight-semibold);
 	}
-
-
 
 	.tab-nav {
 		display: flex;
@@ -495,9 +502,6 @@
 		font-size: 0.8rem;
 		color: #555;
 	}
-
-
-
 
 	.tool-credit {
 		margin: 1.5rem 0 0 0;

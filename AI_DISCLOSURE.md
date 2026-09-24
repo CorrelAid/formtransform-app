@@ -1,4 +1,3 @@
-
 # AI Assistance Disclosure
 
 Parts of the code in this repository were written or refined with the assistance of
@@ -26,4 +25,4 @@ to this project.
 
 ---
 
-*This disclosure is provided in the interest of transparency.*
+_This disclosure is provided in the interest of transparency._

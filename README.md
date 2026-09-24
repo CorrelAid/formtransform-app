@@ -30,9 +30,9 @@ cp .env.example .env
 
 ### Environment variables
 
-| Variable | Required | Description |
-|---|---|---|
-| `GITHUB_TOKEN` | No | GitHub personal access token. Avoids API rate limits (60 req/hour unauthenticated) when fetching content snippets during build. |
+| Variable       | Required | Description                                                                                                                     |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN` | No       | GitHub personal access token. Avoids API rate limits (60 req/hour unauthenticated) when fetching content snippets during build. |
 
 ## Developing
 

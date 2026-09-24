@@ -141,7 +141,13 @@
 			<span class="badge required-badge">{$t('kobo.required')}</span>
 			{xlsxFile ? xlsxFile.name : $t('kobo.xlsxLabel')}
 		</label>
-		<input id="kobo-xlsx" type="file" accept=".xlsx,.xls" onchange={pickXlsx} disabled={converting} />
+		<input
+			id="kobo-xlsx"
+			type="file"
+			accept=".xlsx,.xls"
+			onchange={pickXlsx}
+			disabled={converting}
+		/>
 	</div>
 
 	<div class="file-input-wrapper">
@@ -185,11 +191,17 @@
 	<div class="result-box">
 		<div class="result-box-header"><span>{$t('page.result')}</span></div>
 		<div class="result-box-body">
-			<button class="download-btn" onclick={() => download(result!.xml, 'survey.xml', 'application/xml')}>
+			<button
+				class="download-btn"
+				onclick={() => download(result!.xml, 'survey.xml', 'application/xml')}
+			>
 				{$t('kobo.downloadXml')}
 			</button>
 			{#if result.csv}
-				<button class="download-btn" onclick={() => download(result!.csv!, 'survey.csv', 'text/csv')}>
+				<button
+					class="download-btn"
+					onclick={() => download(result!.csv!, 'survey.csv', 'text/csv')}
+				>
 					{$t('kobo.downloadCsv')}
 				</button>
 			{/if}

@@ -21,16 +21,13 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.convertWelcomeNoteDesc':
 			'Promote a note named "welcome" to LimeSurvey\'s survey welcome text',
 		'page.convertEndNote': 'Convert end note',
-		'page.convertEndNoteDesc':
-			'Promote a note named "end" to LimeSurvey\'s survey end text',
+		'page.convertEndNoteDesc': 'Promote a note named "end" to LimeSurvey\'s survey end text',
 		'page.convertOtherPattern': 'Convert "other" pattern',
-		'page.convertOtherPatternDesc':
-			'Auto-detect the _other question pattern and set other=Y',
+		'page.convertOtherPatternDesc': 'Auto-detect the _other question pattern and set other=Y',
 		'page.convertMarkdown': 'Convert Markdown',
 		'page.convertMarkdownDesc': 'Parse labels/hints/notes as Markdown and convert to HTML',
 		'page.hideNoAnswer': 'Hide "no answer"',
-		'page.hideNoAnswerDesc':
-			'Hide LimeSurvey\'s "no answer" option on non-mandatory questions',
+		'page.hideNoAnswerDesc': 'Hide LimeSurvey\'s "no answer" option on non-mandatory questions',
 		'page.hideQuestionTips': 'Hide question tips',
 		'page.hideQuestionTipsDesc':
 			'Hide LimeSurvey\'s automatic tips such as "Only numbers may be entered in this field"; your own hints are kept',
@@ -63,7 +60,8 @@ const translations: Record<Locale, Record<string, string>> = {
 		'tabs.limesurvey': 'LimeSurvey → DDI',
 
 		// Kobo/LimeSurvey DDI
-		'kobo.hint': 'Upload an XLSForm. CSV export is optional — without it, only DDI metadata is generated.',
+		'kobo.hint':
+			'Upload an XLSForm. CSV export is optional — without it, only DDI metadata is generated.',
 		'kobo.xlsxLabel': 'Choose XLSForm (.xlsx, .xls)',
 		'kobo.csvLabel': 'Choose Kobo CSV export (XML values and headers)',
 		'kobo.advancedOptions': 'Advanced options',
@@ -112,8 +110,7 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.convertWelcomeNoteDesc':
 			'Eine Notiz mit dem Namen „welcome" als LimeSurvey-Begrüßungstext übernehmen',
 		'page.convertEndNote': 'Endnotiz konvertieren',
-		'page.convertEndNoteDesc':
-			'Eine Notiz mit dem Namen „end" als LimeSurvey-Endtext übernehmen',
+		'page.convertEndNoteDesc': 'Eine Notiz mit dem Namen „end" als LimeSurvey-Endtext übernehmen',
 		'page.convertOtherPattern': '„Sonstige"-Muster konvertieren',
 		'page.convertOtherPatternDesc':
 			'Das _other-Fragemuster automatisch erkennen und other=Y setzen',
@@ -138,7 +135,8 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.previewTsv': 'TSV-Vorschau',
 		'page.footerText': 'Dieses Tool basiert auf',
 		'page.repoLink': '@correlaid/formtransform',
-		'page.footerSuffix': '. Einschränkungen und unterstützte Funktionen sind im Repository dokumentiert.',
+		'page.footerSuffix':
+			'. Einschränkungen und unterstützte Funktionen sind im Repository dokumentiert.',
 
 		// Imprint page
 		'imprint.title': 'Impressum',
@@ -155,7 +153,8 @@ const translations: Record<Locale, Record<string, string>> = {
 		'tabs.limesurvey': 'LimeSurvey → DDI',
 
 		// Kobo/LimeSurvey DDI
-		'kobo.hint': 'XLSForm hochladen. CSV-Export ist optional — ohne CSV werden nur DDI-Metadaten erzeugt.',
+		'kobo.hint':
+			'XLSForm hochladen. CSV-Export ist optional — ohne CSV werden nur DDI-Metadaten erzeugt.',
 		'kobo.xlsxLabel': 'XLSForm wählen (.xlsx, .xls)',
 		'kobo.csvLabel': 'Kobo-CSV-Export wählen (XML-Werte und -Header)',
 		'kobo.advancedOptions': 'Erweiterte Optionen',
