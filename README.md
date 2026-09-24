@@ -65,6 +65,12 @@ bun run test:unit
 bun run test
 ```
 
+To diff the TSV tab's output against another version of the library, print it with `scripts/snapshot-tsv.mjs` (the second argument overrides the conversion config):
+
+```sh
+bun scripts/snapshot-tsv.mjs tests/fixtures/minimal.xlsx '{"hideNoAnswer":false}'
+```
+
 ## Deployment
 
 The app is deployed via [Coolify](https://coolify.io/) using [nixpacks](https://nixpacks.com/). The `nixpacks.toml` pins the bun version used in the build container.

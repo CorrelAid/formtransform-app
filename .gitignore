@@ -47,3 +47,6 @@ test-results/
 
 # Docker
 .docker/
+
+# Local agent settings
+.claude/
