@@ -14,23 +14,25 @@ function fetchCdlContent(): Plugin {
 		liability: { en: '', de: '' }
 	};
 
-	function ghHeaders(): Record<string, string> {
+	function ghHeaders(token?: string): Record<string, string> {
 		const h: Record<string, string> = { Accept: 'application/vnd.github.raw+json' };
-		const token = process.env.GITHUB_TOKEN;
 		if (token) h['Authorization'] = `Bearer ${token}`;
 		return h;
 	}
 
 	async function fetchSnippet(path: string): Promise<string> {
+		const url = `https://api.github.com/repos/CorrelAid/cdl-wp-eins/contents/src/content/snippets/${path}`;
+		const token = process.env.GITHUB_TOKEN;
 		try {
-			const res = await fetch(
-				`https://api.github.com/repos/CorrelAid/cdl-wp-eins/contents/src/content/snippets/${path}`,
-				{ headers: ghHeaders() }
-			);
+			let res = await fetch(url, { headers: ghHeaders(token) });
+			if (!res.ok && token) {
+				// A stale or under-scoped token fails even though the repo is public.
+				console.warn(`[cdl-content] ${path}: ${res.status} with GITHUB_TOKEN, retrying without it`);
+				res = await fetch(url, { headers: ghHeaders() });
+			}
 			if (!res.ok) {
 				console.warn(`[cdl-content] Failed to fetch ${path}: ${res.status}`);
-				if (!process.env.GITHUB_TOKEN)
-					console.warn('[cdl-content] GITHUB_TOKEN not set — you may hit rate limits');
+				if (!token) console.warn('[cdl-content] GITHUB_TOKEN not set — you may hit rate limits');
 				return '';
 			}
 			return res.text();
@@ -53,6 +55,11 @@ function fetchCdlContent(): Plugin {
 				formtransform: { en: ftEn, de: ftDe },
 				liability: { en: liEn, de: liDe }
 			};
+			// The liability text is legally required; in CI (Coolify, GitHub Actions)
+			// fail the build rather than deploy a page without it.
+			if (process.env.CI && [ftEn, ftDe, liEn, liDe].some((s) => !s)) {
+				throw new Error('[cdl-content] a CDL snippet is empty, refusing to build');
+			}
 		},
 		resolveId(id) {
 			if (id === 'virtual:cdl-content') return '\0virtual:cdl-content';
