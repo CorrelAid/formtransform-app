@@ -81,7 +81,7 @@ const server = createServer((req, res) => {
 					res.writeHead(200, { 'Content-Type': 'text/html' });
 					res.end(htmlContent);
 					return;
-				} catch (htmlErr) {
+				} catch {
 					// Fall through to index.html fallback
 				}
 			}
@@ -115,7 +115,7 @@ const server = createServer((req, res) => {
 				const indexContent = readFileSync(join(BUILD_DIR, 'index.html'));
 				res.writeHead(200, { 'Content-Type': 'text/html' });
 				res.end(indexContent);
-			} catch (indexErr) {
+			} catch {
 				res.writeHead(404);
 				res.end('Not Found');
 			}

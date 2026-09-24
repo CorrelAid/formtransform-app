@@ -27,6 +27,8 @@
 		</p>
 	</section>
 
+	<!-- Trusted: build-time snippet from CorrelAid/cdl-wp-eins. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html content.liability[$locale]}
 </main>
 

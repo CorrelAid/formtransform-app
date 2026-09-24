@@ -105,8 +105,12 @@
 <main>
 	<div class="container">
 		<h1>{$t('page.title')}</h1>
+		<!-- Trusted: build-time snippet from CorrelAid/cdl-wp-eins. -->
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		<div class="description">{@html content.formtransform[$locale]}</div>
 		<aside class="scope-notice">
+			<!-- Trusted: the app's own i18n string. -->
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			<p>{@html marked.parse($t('scope.notice'), { async: false })}</p>
 			<a
 				href="https://github.com/CorrelAid/formtransform#supported-xlsform-subset"
