@@ -66,12 +66,6 @@
 		align-items: center;
 	}
 
-	footer p {
-		margin: 0;
-		color: var(--color-text-2);
-		font-size: 0.875rem;
-	}
-
 	footer nav {
 		display: flex;
 		gap: 1.5rem;

@@ -44,20 +44,16 @@
 		margin-bottom: 2rem;
 	}
 
-	h2 {
+	/* :global so the rules also reach the liability snippet rendered via {@html}. */
+	main :global(h2) {
 		font-size: 1.5rem;
 		margin-top: 2rem;
 		margin-bottom: 1rem;
 	}
 
-	p,
-	ul {
+	main :global(p) {
 		margin-bottom: 1rem;
 		line-height: 1.6;
-	}
-
-	ul {
-		padding-left: 1.5rem;
 	}
 
 	.back-link {

@@ -124,9 +124,9 @@ test.describe('mobile (375 px)', () => {
 			);
 			expect(overflow).toBeLessThanOrEqual(0);
 			// Below the fold is fine; clipped sideways is not.
-			const btn = page.locator('.convert-btn');
-			await btn.scrollIntoViewIfNeeded();
-			await expect(btn).toBeInViewport({ ratio: 1 });
+			const box = (await page.locator('.convert-btn').boundingBox())!;
+			expect(box.x).toBeGreaterThanOrEqual(0);
+			expect(box.x + box.width).toBeLessThanOrEqual(375);
 		});
 	}
 

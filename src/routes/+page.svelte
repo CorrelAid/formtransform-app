@@ -111,7 +111,7 @@
 		<aside class="scope-notice">
 			<!-- Trusted: the app's own i18n string. -->
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			<p>{@html marked.parse($t('scope.notice'), { async: false })}</p>
+			<div>{@html marked.parse($t('scope.notice'), { async: false })}</div>
 			<a
 				href="https://github.com/CorrelAid/formtransform#supported-xlsform-subset"
 				target="_blank"
@@ -298,7 +298,7 @@
 		font-size: 0.9rem;
 		line-height: var(--line-height-relaxed);
 	}
-	.scope-notice p {
+	.scope-notice :global(p) {
 		margin: 0 0 var(--spacing-sm) 0;
 	}
 	.scope-notice a {
