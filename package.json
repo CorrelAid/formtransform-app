@@ -45,14 +45,11 @@
 	},
 	"dependencies": {
 		"@correlaid/cdl-design": "github:CorrelAid/cdl-design",
-		"@correlaid/formtransform": "github:CorrelAid/formtransform",
+		"@correlaid/formtransform": "github:CorrelAid/formtransform#v0.1.0",
 		"marked": "^17.0.5",
 		"xlsx": "^0.18.5"
 	},
 	"trustedDependencies": [
 		"@correlaid/formtransform"
-	],
-	"patchedDependencies": {
-		"js-xpath@0.0.4": "patches/js-xpath@0.0.4.patch"
-	}
+	]
 }

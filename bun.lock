@@ -6,7 +6,7 @@
       "name": "formtransform-app",
       "dependencies": {
         "@correlaid/cdl-design": "github:CorrelAid/cdl-design",
-        "@correlaid/formtransform": "github:CorrelAid/formtransform",
+        "@correlaid/formtransform": "github:CorrelAid/formtransform#v0.1.0",
         "marked": "^17.0.5",
         "xlsx": "^0.18.5",
       },
@@ -41,9 +41,6 @@
   "trustedDependencies": [
     "@correlaid/formtransform",
   ],
-  "patchedDependencies": {
-    "js-xpath@0.0.4": "patches/js-xpath@0.0.4.patch",
-  },
   "packages": {
     "@axe-core/playwright": ["@axe-core/playwright@4.13.0", "", { "dependencies": { "axe-core": "~4.13.0" }, "peerDependencies": { "playwright-core": ">= 1.0.0" } }, "sha512-6YLx+kxXu5GJceG4ozFg+33a2EMTdjYwWGloJ3sb9Kta5pp+ZNS53uxGVog5JetIY8s++P5UrtX+cri+u0VAVg=="],
 
@@ -53,7 +50,7 @@
 
     "@correlaid/cdl-design": ["@correlaid/cdl-design@github:CorrelAid/cdl-design#5cc4aed", { "dependencies": { "@sveltejs/kit": "^2.50.2", "@sveltejs/package": "^2.5.7", "@sveltejs/vite-plugin-svelte": "^6.2.4", "@terrazzo/parser": "^0.5.0", "@terrazzo/plugin-css": "^0.5.0", "svelte": "^5.0.0", "typescript": "^5.9.3", "vite": "^7.3.1" }, "peerDependencies": { "shiki": "^3.0.0", "svelte": "^5.0.0" } }, "CorrelAid-cdl-design-5cc4aed", "sha512-f1rqvRaO8l01xazQJA6o0uVYrJL9AK15YHp42SixQ6bqwUoiTd5AVPYDXEnUfB0DsnZIwDYfAs/glTbxloiA7w=="],
 
-    "@correlaid/formtransform": ["@correlaid/formtransform@github:CorrelAid/formtransform#f12ef47", { "dependencies": { "js-xpath": "0.0.4", "marked": "^17.0.5", "xlsx": "^0.18.5" }, "bin": { "formtransform": "dist/cli.js" } }, "CorrelAid-formtransform-f12ef47", "sha512-TPdAHPLfIIV3QOx1FDxXFccoUm9WT0BXnJ3mVo0O85NbqhsS0mJc1mDmJvoHNRwA8Wi/YXAFC+4YTSf3tr4TwA=="],
+    "@correlaid/formtransform": ["@correlaid/formtransform@github:CorrelAid/formtransform#336205c", { "dependencies": { "marked": "^17.0.5", "xlsx": "^0.18.5" }, "bin": { "formtransform": "dist/cli.js" } }, "CorrelAid-formtransform-336205c", "sha512-FRgW8W9SFPyc/m+iMOyEtftzhLk9MysJXlzjFqKks/53MRlAdtlNSRY/3yRXMMuYAV7SwqeF0OO6Drqwi3Apvw=="],
 
     "@cspotcode/source-map-support": ["@cspotcode/source-map-support@0.8.1", "", { "dependencies": { "@jridgewell/trace-mapping": "0.3.9" } }, "sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw=="],
 
@@ -345,8 +342,6 @@
 
     "balanced-match": ["balanced-match@1.0.2", "", {}, "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="],
 
-    "biginteger": ["biginteger@1.0.3", "", {}, "sha512-gmTfQyNVreGeTlSrZiD7mAg52B0e20NWTJdt9zESPcUce/SEdP0UT/GGal6OZxNELiues4+XuyJzyAlkuO9nNg=="],
-
     "binary-extensions": ["binary-extensions@2.3.0", "", {}, "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw=="],
 
     "brace-expansion": ["brace-expansion@1.1.12", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, "sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg=="],
@@ -514,8 +509,6 @@
     "is-what": ["is-what@4.1.16", "", {}, "sha512-ZhMwEosbFJkA0YhFnNDgTM4ZxDRsS6HqTo7qsZM08fehyRYIYa0yHu5R6mgo1n/8MgaPBXiPimPD77baVFYg+A=="],
 
     "isexe": ["isexe@2.0.0", "", {}, "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw=="],
-
-    "js-xpath": ["js-xpath@0.0.4", "", { "dependencies": { "biginteger": "^1.0.3" } }, "sha512-8kr9aIje0Af9EaIHFkoLYZDQtrSOofwL/H4dVU8xnTylXFRlFbNlklOtZsvQnDouscsKSXEddUb5vTwTU/oAaQ=="],
 
     "js-yaml": ["js-yaml@4.1.1", "", { "dependencies": { "argparse": "^2.0.1" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA=="],
 
