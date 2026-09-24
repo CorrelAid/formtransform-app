@@ -30,6 +30,14 @@ test('page shows the title and the scope notice', async ({ page }) => {
 	await expect(page.locator('.scope-notice')).toBeVisible();
 });
 
+test('German is the default language and EN switches it', async ({ page }) => {
+	await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+	await expect(page.locator('.convert-btn')).toHaveText('Konvertieren');
+	await page.getByRole('button', { name: 'EN', exact: true }).click();
+	await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+	await expect(page.locator('.convert-btn')).toHaveText('Convert');
+});
+
 test('XLSForm → LimeSurvey TSV', async ({ page }) => {
 	await page.locator('#file-input').setInputFiles(fixture('minimal.xlsx'));
 	await convert(page);

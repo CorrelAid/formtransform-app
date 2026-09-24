@@ -2,7 +2,7 @@ import { writable, derived } from 'svelte/store';
 
 export type Locale = 'en' | 'de';
 
-export const locale = writable<Locale>('en');
+export const locale = writable<Locale>('de');
 
 const translations: Record<Locale, Record<string, string>> = {
 	en: {

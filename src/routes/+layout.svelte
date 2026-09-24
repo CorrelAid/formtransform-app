@@ -8,13 +8,17 @@
 	let { children } = $props();
 
 	const locales = [
-		{ code: 'en', label: 'EN' },
-		{ code: 'de', label: 'DE' }
+		{ code: 'de', label: 'DE' },
+		{ code: 'en', label: 'EN' }
 	];
 
 	function switchLocale(lang: string) {
 		locale.set(lang as Locale);
 	}
+
+	$effect(() => {
+		document.documentElement.lang = $locale;
+	});
 </script>
 
 <svelte:head></svelte:head>
