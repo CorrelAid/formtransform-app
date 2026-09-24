@@ -65,6 +65,15 @@ bun run test:unit
 bun run test
 ```
 
+The Playwright suite has four parts:
+
+- `tests/golden.spec.ts` runs the library's own blessed fixtures through the GUI and compares the downloaded files with them. The fixtures are read from `node_modules/@correlaid/formtransform`, so they are pinned by `bun.lock`: every registered type (`registry/entities/*`: XLSForm → TSV, Kobo → DDI, LimeSurvey → DDI) and every whole-survey fixture (`tests/fixtures/surveys/*`).
+- `tests/gui.spec.ts` checks UI behaviour: tab states, the Kobo mode switch, rejected forms, whether each option reaches the converter, keyboard use, and phone-width layout.
+- `tests/accessibility.spec.ts` runs an axe-core WCAG 2.1 AA scan of every tab, in DE and EN, before and after a conversion.
+- `tests/main.spec.ts` runs one upload smoke test per tab.
+
+The dev server fetches the intro and liability snippets from the GitHub API when it starts. Without `GITHUB_TOKEN` you can hit the anonymous rate limit, and the imprint test then fails.
+
 To diff the TSV tab's output against another version of the library, print it with `scripts/snapshot-tsv.mjs` (the second argument overrides the conversion config):
 
 ```sh

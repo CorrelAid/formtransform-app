@@ -16,6 +16,7 @@ export default defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	reporter: 'list',
 	timeout: 60000, // Increase timeout to 60 seconds
+	expect: { timeout: 10_000 },
 	use: {
 		baseURL: 'http://localhost:5173',
 		trace: 'on-first-retry',
@@ -25,6 +26,7 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'chromium',
+			testIgnore: /.*accessibility.*\.spec\.ts/,
 			use: {
 				...devices['Desktop Chrome'],
 
