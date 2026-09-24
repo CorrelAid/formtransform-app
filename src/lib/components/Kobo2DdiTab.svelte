@@ -5,7 +5,8 @@
 		buildDdiXml,
 		extractVariables,
 		choicesByListFromRows,
-		buildDataCsv
+		buildDataCsv,
+		parseResponses
 	} from '@correlaid/formtransform';
 	import { t } from '$lib/i18n';
 
@@ -32,54 +33,6 @@
 		error = null;
 	}
 
-	function parseKoboCsv(text: string): Record<string, string>[] {
-		// Kobo exports are `;`- or `,`-separated; whichever delimiter
-		// splits the header line into more columns wins. UTF-8-BOM is
-		// stripped either way.
-		const stripBom = (s: string) => (s.charCodeAt(0) === 0xfeff ? s.slice(1) : s);
-		const split = (line: string, sep: string) => {
-			const out: string[] = [];
-			let cur = '';
-			let inQuote = false;
-			for (let i = 0; i < line.length; i++) {
-				const c = line[i];
-				if (inQuote) {
-					if (c === '"' && line[i + 1] === '"') {
-						cur += '"';
-						i++;
-					} else if (c === '"') {
-						inQuote = false;
-					} else {
-						cur += c;
-					}
-				} else {
-					if (c === '"') inQuote = true;
-					else if (c === sep) {
-						out.push(cur);
-						cur = '';
-					} else cur += c;
-				}
-			}
-			out.push(cur);
-			return out;
-		};
-		const parse = (sep: string) => {
-			const lines = text.split(/\r?\n/).filter((l) => l.length > 0);
-			if (lines.length < 2) return { width: 0, rows: [] };
-			const headers = split(lines[0], sep).map((h) => stripBom(h));
-			const rows = lines.slice(1).map((line) => {
-				const cells = split(line, sep);
-				const row: Record<string, string> = {};
-				for (let i = 0; i < headers.length; i++) row[headers[i]] = cells[i] ?? '';
-				return row;
-			});
-			return { width: headers.length, rows };
-		};
-		const semi = parse(';');
-		const comma = parse(',');
-		return semi.width > comma.width ? semi.rows : comma.rows;
-	}
-
 	async function convert() {
 		if (!xlsxFile || !browser) return;
 		converting = true;
@@ -97,7 +50,7 @@
 				result = { xml, csv: null };
 			} else {
 				const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx);
-				const submissions = parseKoboCsv(await csvFile!.text());
+				const submissions = parseResponses(await csvFile!.text(), csvFile!.name);
 				const variables = extractVariables(surveyData, choicesByListFromRows(choicesData));
 				const xml = buildDdiXml(surveyData, choicesData, {
 					assetName: title || undefined,

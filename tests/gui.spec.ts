@@ -44,6 +44,17 @@ test('Kobo tab switches from metadata to full mode when a CSV is added', async (
 	expect(csv.text).toBe('consent,name\r\nyes,Alice\r\nno,Bob\r\n');
 });
 
+test('Kobo export with BOM, quoted multi-line field and ";" inside quotes', async ({ page }) => {
+	await openTab(page, 'kobo');
+	await upload(page, '#kobo-xlsx', fixture('minimal.xlsx'));
+	await page.locator('#kobo-csv').setInputFiles(fixture('kobo-multiline-bom.csv'));
+	await convert(page);
+	await expect(page.locator('.error')).toHaveCount(0);
+	const csv = await download(page, 1);
+	// Two respondents, values intact; the header carries no BOM.
+	expect(csv.text).toBe('consent,name\r\nyes,"Alice\nSmith"\r\nno,Bob; Jr.\r\n');
+});
+
 test('a form outside the CDL subset is rejected with a message, no result', async ({ page }) => {
 	await upload(page, '#file-input', REJECTED_XLSX);
 	await convert(page);
