@@ -1,0 +1,10 @@
+class	type/scale	name	relevance	text	help	language	validation	em_validation_q	mandatory	other	default	same_default	hidden	hide_tip
+S		language	1	en		en								
+S		format	1	A		en								
+S		shownoanswer	1	N		en								
+SL		surveyls_title	1	Test Survey		en								
+G		Questions	1	Questions		en								
+Q	L	consent	1	Do you consent?		en								1
+A		yes		Yes		en								
+A		no		No		en								
+Q	S	name	1	Your name		en								1
