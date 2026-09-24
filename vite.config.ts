@@ -74,6 +74,17 @@ function fetchCdlContent(): Plugin {
 
 export default defineConfig({
 	plugins: [sveltekit(), cdlTokens(), fetchCdlContent()],
+	resolve: {
+		alias: {
+			// If js-xpath fails to load in the browser, the library's XPath
+			// transpiler silently turns every relevance/constraint into "1".
+			// Its `main` (src/main.js) leaves a bare `require` in the production
+			// bundle; the shipped browserify bundle is self-contained. The
+			// `this.alert` it runs at load time is undefined in strict ESM, which
+			// patches/js-xpath@0.0.4.patch rewrites to globalThis.
+			'js-xpath': 'js-xpath/dist/js-xpath.js'
+		}
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

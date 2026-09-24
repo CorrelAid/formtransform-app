@@ -1,0 +1,26 @@
+diff --git a/dist/js-xpath.js b/dist/js-xpath.js
+index 47ac6ec770f7d8b64ef31bc5b979c0f7b5c56e16..46b58c97bbd32f3ad2bab8055a53296295a2bc97 100644
+--- a/dist/js-xpath.js
++++ b/dist/js-xpath.js
+@@ -5685,7 +5685,7 @@ function checkPureVirtual(handler) {
+         handler(e);
+     }
+ }
+-checkPureVirtual(this.alert || this.print || function(e) {throw e;});
++checkPureVirtual(globalThis.alert || globalThis.print || function(e) {throw e;});
+ 
+ return SN;
+ 
+diff --git a/src/lib/schemeNumber.js b/src/lib/schemeNumber.js
+index 08d2bfb8010f9e91d84631d4653697be7810fc6e..d595c2e6a79e0f5b3bf3cc440a5799e120dfd1a7 100644
+--- a/src/lib/schemeNumber.js
++++ b/src/lib/schemeNumber.js
+@@ -3647,7 +3647,7 @@ function checkPureVirtual(handler) {
+         handler(e);
+     }
+ }
+-checkPureVirtual(this.alert || this.print || function(e) {throw e;});
++checkPureVirtual(globalThis.alert || globalThis.print || function(e) {throw e;});
+ 
+ return SN;
+ 
