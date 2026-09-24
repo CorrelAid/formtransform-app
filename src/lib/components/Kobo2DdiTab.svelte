@@ -284,7 +284,8 @@
 	}
 	.optional-badge {
 		background: #eee;
-		color: #555;
+		/* Dark enough for 4.5:1 even under .file-label.optional's opacity. */
+		color: #333;
 	}
 	.mode-banner {
 		padding: 0.5rem 0.75rem;

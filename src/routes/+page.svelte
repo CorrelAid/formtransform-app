@@ -308,6 +308,7 @@
 
 	.tab-nav {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 0.5rem;
 		margin: 0 0 var(--spacing-lg) 0;
 		border-bottom: var(--dimension-border-width) solid var(--color-text-primary);

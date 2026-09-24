@@ -73,11 +73,7 @@
 	}
 
 	a {
-		color: #007bff;
-		text-decoration: none;
-	}
-
-	a:hover {
+		color: var(--color-text-primary);
 		text-decoration: underline;
 	}
 </style>
