@@ -33,12 +33,11 @@
 	}
 
 	function parseKoboCsv(text: string): Record<string, string>[] {
-		// Mirror the Python worker's delimiter detection: Kobo exports
-		// XML-paths (group/question) in the header line when the file
-		// is `;`-separated, raw names when it's `,`-separated. The
-		// header shape is the signal. UTF-8-BOM is stripped either way.
+		// Kobo exports are `;`- or `,`-separated; whichever delimiter
+		// splits the header line into more columns wins. UTF-8-BOM is
+		// stripped either way.
 		const stripBom = (s: string) => (s.charCodeAt(0) === 0xfeff ? s.slice(1) : s);
-		const split = (line: string) => {
+		const split = (line: string, sep: string) => {
 			const out: string[] = [];
 			let cur = '';
 			let inQuote = false;
@@ -55,7 +54,7 @@
 					}
 				} else {
 					if (c === '"') inQuote = true;
-					else if (c === ',') {
+					else if (c === sep) {
 						out.push(cur);
 						cur = '';
 					} else cur += c;
@@ -66,19 +65,19 @@
 		};
 		const parse = (sep: string) => {
 			const lines = text.split(/\r?\n/).filter((l) => l.length > 0);
-			if (lines.length < 2) return [];
-			const headers = split(lines[0]).map((h) => stripBom(h));
-			return lines.slice(1).map((line) => {
-				const cells = split(line);
+			if (lines.length < 2) return { width: 0, rows: [] };
+			const headers = split(lines[0], sep).map((h) => stripBom(h));
+			const rows = lines.slice(1).map((line) => {
+				const cells = split(line, sep);
 				const row: Record<string, string> = {};
 				for (let i = 0; i < headers.length; i++) row[headers[i]] = cells[i] ?? '';
 				return row;
 			});
+			return { width: headers.length, rows };
 		};
 		const semi = parse(';');
-		if (semi.length && Object.keys(semi[0]).some((k) => k.includes('/'))) return semi;
 		const comma = parse(',');
-		return comma;
+		return semi.width > comma.width ? semi.rows : comma.rows;
 	}
 
 	async function convert() {
@@ -88,7 +87,7 @@
 		result = null;
 		progress = null;
 		try {
-			const xlsx = new Uint8Array(await xlsxFile.arrayBuffer());
+			const xlsx = await xlsxFile.arrayBuffer();
 			if (mode === 'metadata') {
 				const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx);
 				const xml = buildDdiXml(surveyData, choicesData, {
