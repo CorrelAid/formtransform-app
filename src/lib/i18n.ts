@@ -31,6 +31,9 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.hideNoAnswer': 'Hide "no answer"',
 		'page.hideNoAnswerDesc':
 			'Hide LimeSurvey\'s "no answer" option on non-mandatory questions',
+		'page.hideQuestionTips': 'Hide question tips',
+		'page.hideQuestionTipsDesc':
+			'Hide LimeSurvey\'s automatic tips such as "Only numbers may be entered in this field"; your own hints are kept',
 		'page.convert': 'Convert',
 		'page.converting': 'Converting...',
 		'page.error': 'Error:',
@@ -120,6 +123,9 @@ const translations: Record<Locale, Record<string, string>> = {
 		'page.hideNoAnswer': '„Keine Antwort" ausblenden',
 		'page.hideNoAnswerDesc':
 			'Die „Keine Antwort"-Option bei nicht-obligatorischen Fragen ausblenden',
+		'page.hideQuestionTips': 'Fragetipps ausblenden',
+		'page.hideQuestionTipsDesc':
+			'Die automatischen LimeSurvey-Tipps (z.B. zu erlaubten Eingaben oder zur Mehrfachauswahl) ausblenden; eigene Hinweise bleiben erhalten',
 		'page.convert': 'Konvertieren',
 		'page.converting': 'Konvertiere...',
 		'page.error': 'Fehler:',

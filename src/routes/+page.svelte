@@ -20,7 +20,8 @@
 		convertEndNote: true,
 		convertOtherPattern: true,
 		convertMarkdown: true,
-		hideNoAnswer: true
+		hideNoAnswer: true,
+		hideQuestionTips: true
 	});
 
 	function handleFileChange(e: Event) {
@@ -188,6 +189,13 @@
 						<div>
 							<strong>{$t('page.hideNoAnswer')}</strong>
 							<span>{$t('page.hideNoAnswerDesc')}</span>
+						</div>
+					</label>
+					<label class="option">
+						<input type="checkbox" bind:checked={config.hideQuestionTips} />
+						<div>
+							<strong>{$t('page.hideQuestionTips')}</strong>
+							<span>{$t('page.hideQuestionTipsDesc')}</span>
 						</div>
 					</label>
 				</div>
