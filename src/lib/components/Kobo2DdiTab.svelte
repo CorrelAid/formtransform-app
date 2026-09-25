@@ -6,8 +6,10 @@
 		extractVariables,
 		choicesByListFromRows,
 		buildDataCsv,
-		parseResponses
+		parseResponses,
+		XLSValidator
 	} from '@correlaid/formtransform';
+	import ErrorBox from './ErrorBox.svelte';
 	import { t } from '$lib/i18n';
 	import { errorMessage } from '$lib/errors';
 
@@ -17,6 +19,7 @@
 	let converting = $state(false);
 	let progress = $state<string | null>(null);
 	let error = $state<string | null>(null);
+	let issues = $state<string[]>([]);
 	let result = $state<{ xml: string; csv: string | null } | null>(null);
 
 	let mode = $derived(csvFile ? 'full' : 'metadata');
@@ -38,6 +41,7 @@
 		if (!xlsxFile || !browser) return;
 		converting = true;
 		error = null;
+		issues = [];
 		result = null;
 		progress = null;
 		try {
@@ -47,6 +51,12 @@
 			const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx, {
 				skipValidation: true
 			});
+			// The DDI subset: registered types, resolvable lists, unique names, but
+			// no LimeSurvey length limits. buildDdiXml does not validate by itself.
+			issues = XLSValidator.validateSubset(surveyData, choicesData, { target: 'ddi' })
+				.filter((v) => v.severity === 'error')
+				.map((v) => v.message);
+			if (issues.length) return;
 			if (mode === 'metadata') {
 				const xml = buildDdiXml(surveyData, choicesData, {
 					assetName: title || undefined,
@@ -140,9 +150,7 @@
 	</button>
 </div>
 
-{#if error}
-	<div class="error"><strong>{$t('page.error')}</strong> {error}</div>
-{/if}
+<ErrorBox {error} {issues} />
 
 {#if result}
 	<div class="result-box">
@@ -302,15 +310,6 @@
 	}
 	.download-btn {
 		margin: 0 0.5rem 0.5rem 0;
-	}
-	.error {
-		white-space: pre-line;
-		padding: 1rem;
-		background: #ffebee;
-		border-left: 4px solid #f44336;
-		color: #c62828;
-		border-radius: var(--radius-md);
-		margin-bottom: 1rem;
 	}
 	.result-box {
 		background: var(--color-white);

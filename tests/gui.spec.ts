@@ -2,7 +2,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import * as path from 'node:path';
 import {
-	LIB_ROOT,
+	LIB_FIXTURES,
 	convert,
 	download,
 	fixture,
@@ -13,7 +13,10 @@ import {
 	type XlsForm
 } from './helpers';
 
-const REJECTED_XLSX = path.join(LIB_ROOT, 'tests/fixtures/surveys/all_types_survey/xlsform.xlsx');
+const REJECTED_XLSX = path.join(
+	LIB_FIXTURES,
+	'tests/fixtures/surveys/all_types_survey/xlsform.xlsx'
+);
 
 test.beforeEach(async ({ page }) => {
 	await openApp(page);
@@ -131,6 +134,28 @@ test('Kobo tab keeps Kobo-style names the TSV tab rejects', async ({ page }) => 
 	const { text } = await download(page);
 	expect(text).toContain('name="how_often_do_you_visit"');
 	expect(text).toContain('sometimes');
+});
+
+test('Kobo tab rejects unregistered types, listing each', async ({ page }) => {
+	const file = writeXlsForm(
+		{
+			survey: [
+				{ type: 'geopoint', name: 'where', label: 'Where?' },
+				{ type: 'image', name: 'photo', label: 'Photo' },
+				{ type: 'text', name: 'full_name', label: 'Name' }
+			],
+			choices: []
+		},
+		test.info().outputPath('unregistered.xlsx')
+	);
+	await openTab(page, 'kobo');
+	await upload(page, '#kobo-xlsx', file);
+	await convert(page);
+	const items = page.locator('.error li');
+	await expect(items).toHaveCount(2);
+	await expect(items.nth(0)).toContainText('geopoint');
+	await expect(items.nth(1)).toContainText('image');
+	await expect(page.locator('.result-box')).toHaveCount(0);
 });
 
 test('choosing a new file clears the previous result', async ({ page }) => {

@@ -5,12 +5,15 @@ import { fileURLToPath } from 'node:url';
 import XLSX from 'xlsx';
 
 /**
- * The library's blessed fixtures, read from the installed package so they are
- * pinned by bun.lock and cannot drift from the code under test. bun installs
- * the whole git repo, not just `dist/`.
+ * The library's blessed fixtures for the installed release, unpacked by
+ * scripts/fetch-fixtures.mjs (run by `bun run test`) from the checksum-pinned
+ * `formtransform-fixtures-<version>.tar.gz` release asset.
  */
-export const LIB_ROOT = fileURLToPath(
-	new URL('../node_modules/@correlaid/formtransform/', import.meta.url)
+const FIXTURES_PIN = JSON.parse(
+	fs.readFileSync(fileURLToPath(new URL('./formtransform-fixtures.json', import.meta.url)), 'utf-8')
+) as { version: string };
+export const LIB_FIXTURES = fileURLToPath(
+	new URL(`../node_modules/.cache/formtransform-fixtures/${FIXTURES_PIN.version}/`, import.meta.url)
 );
 
 export const fixture = (name: string) =>
@@ -63,7 +66,7 @@ function readIf(p: string): string | null {
 
 function discover(root: string, formDir: (dir: string) => string, group: string): GoldenCase[] {
 	if (!fs.existsSync(root)) {
-		throw new Error(`${root} not found — is @correlaid/formtransform installed from git?`);
+		throw new Error(`${root} not found — run node scripts/fetch-fixtures.mjs (bun run test does)`);
 	}
 	const cases: GoldenCase[] = [];
 	for (const name of fs.readdirSync(root).sort()) {
@@ -91,14 +94,14 @@ function discover(root: string, formDir: (dir: string) => string, group: string)
 /** One folder per registered question type: fixtures/xlsform.json, tsv.tsv, ddi.xml. */
 export const registryCases = () =>
 	discover(
-		path.join(LIB_ROOT, 'registry', 'entities'),
+		path.join(LIB_FIXTURES, 'registry', 'entities'),
 		(d) => path.join(d, 'fixtures'),
 		'registry'
 	);
 
 /** Whole-survey fixtures: xlsform.{json,xlsx}, tsv.tsv, ddi.xml. */
 export const surveyCases = () =>
-	discover(path.join(LIB_ROOT, 'tests', 'fixtures', 'surveys'), (d) => d, 'surveys');
+	discover(path.join(LIB_FIXTURES, 'tests', 'fixtures', 'surveys'), (d) => d, 'surveys');
 
 /** `prodDate` is the build-time wall clock. */
 export const scrubProdDate = (xml: string) =>

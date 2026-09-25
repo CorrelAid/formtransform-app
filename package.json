@@ -15,7 +15,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "bunx playwright test"
+		"test": "node scripts/fetch-fixtures.mjs && bunx playwright test"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
@@ -45,11 +45,8 @@
 	},
 	"dependencies": {
 		"@correlaid/cdl-design": "github:CorrelAid/cdl-design",
-		"@correlaid/formtransform": "github:CorrelAid/formtransform#v0.1.5",
+		"@correlaid/formtransform": "https://github.com/CorrelAid/formtransform/releases/download/v0.1.6/correlaid-formtransform-0.1.6.tgz",
 		"marked": "^17.0.5",
 		"xlsx": "^0.18.5"
-	},
-	"trustedDependencies": [
-		"@correlaid/formtransform"
-	]
+	}
 }

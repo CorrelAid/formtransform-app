@@ -67,7 +67,7 @@ bun run test
 
 The Playwright suite has four parts:
 
-- `tests/golden.spec.ts` runs the library's own blessed fixtures through the GUI and compares the downloaded files with them. The fixtures are read from `node_modules/@correlaid/formtransform`, so they are pinned by `bun.lock`: every registered type (`registry/entities/*`: XLSForm → TSV, Kobo → DDI, LimeSurvey → DDI) and every whole-survey fixture (`tests/fixtures/surveys/*`).
+- `tests/golden.spec.ts` runs the library's own blessed fixtures through the GUI and compares the downloaded files with them. The fixtures come from the library release's `formtransform-fixtures-<version>.tar.gz` asset. `bun run test` downloads it first (`scripts/fetch-fixtures.mjs`), checks the sha256 pinned in `tests/formtransform-fixtures.json` and unpacks it to `node_modules/.cache/`. When you bump `@correlaid/formtransform`, update that pin too; the script refuses to run on a version mismatch. The fixtures cover every registered type (`registry/entities/*`: XLSForm → TSV, Kobo → DDI, LimeSurvey → DDI) and every whole-survey fixture (`tests/fixtures/surveys/*`).
 - `tests/gui.spec.ts` checks UI behaviour: tab states, the Kobo mode switch, rejected forms, whether each option reaches the converter, keyboard use, and phone-width layout.
 - `tests/accessibility.spec.ts` runs an axe-core WCAG 2.1 AA scan of every tab, in DE and EN, before and after a conversion.
 - `tests/main.spec.ts` runs one upload smoke test per tab.

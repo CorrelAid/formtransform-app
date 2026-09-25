@@ -76,9 +76,12 @@ for (const c of surveyCases()) {
 		// Kobo tab skips LimeSurvey's naming rules, like the library's DDI path.
 		const bytes = fs.readFileSync(c.xlsx);
 		const lenient = XLSLoader.parseXLSData(bytes, { skipValidation: true });
-		const problems = XLSValidator.validateSubset(lenient.surveyData, lenient.choicesData)
-			.filter((v) => v.severity === 'error')
-			.map((v) => v.message);
+		const errorsFor = (target: 'lstsv' | 'ddi') =>
+			XLSValidator.validateSubset(lenient.surveyData, lenient.choicesData, { target })
+				.filter((v) => v.severity === 'error')
+				.map((v) => v.message);
+		const problems = errorsFor('lstsv');
+		const ddiProblems = errorsFor('ddi');
 
 		test('XLSForm → TSV: blessed output, or every subset violation', async ({ page }) => {
 			await upload(page, '#file-input', c.xlsx);
@@ -93,11 +96,16 @@ for (const c of surveyCases()) {
 			expect(fromTsvDownload(text)).toBe(c.tsv);
 		});
 
-		test('Kobo → DDI: same XML as the library', async ({ page }) => {
+		test('Kobo → DDI: same XML as the library, or every DDI subset violation', async ({ page }) => {
 			await openTab(page, 'kobo');
 			await upload(page, '#kobo-xlsx', c.xlsx);
 			await setTitle(page, c.name);
 			await convert(page);
+			if (ddiProblems.length) {
+				await expect(page.locator('.error li')).toHaveText(ddiProblems);
+				await expect(page.locator('.result-box')).toHaveCount(0);
+				return;
+			}
 			await expect(page.locator('.error')).toHaveCount(0);
 			const { surveyData, choicesData, settingsData } = lenient;
 			const expected = settingsData.length

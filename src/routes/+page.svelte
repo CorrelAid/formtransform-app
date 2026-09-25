@@ -7,6 +7,7 @@
 	import { content } from 'virtual:cdl-content';
 	import Kobo2DdiTab from '$lib/components/Kobo2DdiTab.svelte';
 	import Lstsv2DdiTab from '$lib/components/Lstsv2DdiTab.svelte';
+	import ErrorBox from '$lib/components/ErrorBox.svelte';
 
 	let activeTab = $state<'tsv' | 'kobo' | 'lime'>('tsv');
 
@@ -58,7 +59,7 @@
 			const { surveyData, choicesData } = XLSLoader.parseXLSData(arrayBuffer, {
 				skipValidation: true
 			});
-			issues = XLSValidator.validateSubset(surveyData, choicesData)
+			issues = XLSValidator.validateSubset(surveyData, choicesData, { target: 'lstsv' })
 				.filter((v) => v.severity === 'error')
 				.map((v) => v.message);
 			if (issues.length) return;
@@ -223,21 +224,7 @@
 				</button>
 			</div>
 
-			{#if issues.length}
-				<div class="error">
-					<strong>{$t('page.issues')}</strong>
-					<ul>
-						{#each issues as issue, i (i)}
-							<li>{issue}</li>
-						{/each}
-					</ul>
-				</div>
-			{:else if error}
-				<div class="error">
-					<strong>{$t('page.error')}</strong>
-					{error}
-				</div>
-			{/if}
+			<ErrorBox {error} {issues} />
 
 			{#if tsvContent && stats && activeTab === 'tsv'}
 				<div class="result-box">
@@ -413,21 +400,6 @@
 
 	.download-btn:hover {
 		opacity: 0.9;
-	}
-
-	.error {
-		white-space: pre-line;
-		padding: 1rem;
-		background: #ffebee;
-		border-left: 4px solid #f44336;
-		color: #c62828;
-		border-radius: var(--radius-md);
-		margin-bottom: 1rem;
-	}
-	.error ul {
-		white-space: normal;
-		margin: 0.5rem 0 0;
-		padding-left: 1.25rem;
 	}
 
 	.result-box {

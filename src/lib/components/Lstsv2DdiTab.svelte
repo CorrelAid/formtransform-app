@@ -3,6 +3,7 @@
 	import { lstsvToDdiXml } from '@correlaid/formtransform';
 	import { t } from '$lib/i18n';
 	import { errorMessage } from '$lib/errors';
+	import ErrorBox from './ErrorBox.svelte';
 
 	let tsvFile = $state<File | null>(null);
 	let title = $state('');
@@ -79,9 +80,7 @@
 	</button>
 </div>
 
-{#if error}
-	<div class="error"><strong>{$t('page.error')}</strong> {error}</div>
-{/if}
+<ErrorBox {error} />
 
 {#if result}
 	<div class="result-box">
@@ -201,15 +200,6 @@
 	}
 	.download-btn {
 		margin: 0 0 0.5rem 0;
-	}
-	.error {
-		white-space: pre-line;
-		padding: 1rem;
-		background: #ffebee;
-		border-left: 4px solid #f44336;
-		color: #c62828;
-		border-radius: var(--radius-md);
-		margin-bottom: 1rem;
 	}
 	.result-box {
 		background: var(--color-white);
