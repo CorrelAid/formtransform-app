@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { lstsvToDdiXml } from '@correlaid/formtransform';
 	import { t } from '$lib/i18n';
+	import { errorMessage } from '$lib/errors';
 
 	let tsvFile = $state<File | null>(null);
 	let title = $state('');
@@ -26,7 +27,7 @@
 			const xml = lstsvToDdiXml(tsv, { assetName: title || undefined });
 			result = { xml };
 		} catch (e) {
-			error = `${e}`;
+			error = errorMessage(e);
 			console.error(e);
 		} finally {
 			converting = false;
@@ -202,6 +203,7 @@
 		margin: 0 0 0.5rem 0;
 	}
 	.error {
+		white-space: pre-line;
 		padding: 1rem;
 		background: #ffebee;
 		border-left: 4px solid #f44336;

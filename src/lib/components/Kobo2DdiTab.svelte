@@ -9,6 +9,7 @@
 		parseResponses
 	} from '@correlaid/formtransform';
 	import { t } from '$lib/i18n';
+	import { errorMessage } from '$lib/errors';
 
 	let xlsxFile = $state<File | null>(null);
 	let csvFile = $state<File | null>(null);
@@ -40,16 +41,19 @@
 		result = null;
 		progress = null;
 		try {
+			// LimeSurvey's naming rules (short alphanumeric names and codes) don't
+			// apply to DDI, which keeps Kobo names as they are; the TSV tab stays strict.
 			const xlsx = await xlsxFile.arrayBuffer();
+			const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx, {
+				skipValidation: true
+			});
 			if (mode === 'metadata') {
-				const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx);
 				const xml = buildDdiXml(surveyData, choicesData, {
 					assetName: title || undefined,
 					settings: settingsData[0]
 				});
 				result = { xml, csv: null };
 			} else {
-				const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx);
 				const submissions = parseResponses(await csvFile!.text(), csvFile!.name);
 				const variables = extractVariables(surveyData, choicesByListFromRows(choicesData));
 				const xml = buildDdiXml(surveyData, choicesData, {
@@ -61,7 +65,7 @@
 				result = { xml, csv };
 			}
 		} catch (e) {
-			error = `${e}`;
+			error = errorMessage(e);
 			console.error(e);
 		} finally {
 			converting = false;
@@ -300,6 +304,7 @@
 		margin: 0 0.5rem 0.5rem 0;
 	}
 	.error {
+		white-space: pre-line;
 		padding: 1rem;
 		background: #ffebee;
 		border-left: 4px solid #f44336;

@@ -9,7 +9,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { XLSLoader, buildDdiXml, lstsvToDdiXml } from '@correlaid/formtransform';
+import { XLSLoader, XLSValidator, buildDdiXml, lstsvToDdiXml } from '@correlaid/formtransform';
 import {
 	convert,
 	download,
@@ -71,21 +71,20 @@ for (const c of registryCases()) {
 
 for (const c of surveyCases()) {
 	test.describe(`survey fixture: ${c.name}`, () => {
-		// The app validates (the library's own snapshots skip validation), so
-		// the oracle is: whatever the strict loader decides, the GUI shows.
-		let rejection: string | null = null;
-		let parsed: ReturnType<typeof XLSLoader.parseXLSData> | null = null;
-		try {
-			parsed = XLSLoader.parseXLSData(fs.readFileSync(c.xlsx));
-		} catch (e) {
-			rejection = (e as Error).message;
-		}
+		// The TSV tab validates strictly (the library's own snapshots skip
+		// validation), so its oracle is whatever the strict loader decides. The
+		// Kobo tab skips LimeSurvey's naming rules, like the library's DDI path.
+		const bytes = fs.readFileSync(c.xlsx);
+		const lenient = XLSLoader.parseXLSData(bytes, { skipValidation: true });
+		const problems = XLSValidator.validateSubset(lenient.surveyData, lenient.choicesData)
+			.filter((v) => v.severity === 'error')
+			.map((v) => v.message);
 
-		test('XLSForm → TSV: blessed output, or the validator’s rejection', async ({ page }) => {
+		test('XLSForm → TSV: blessed output, or every subset violation', async ({ page }) => {
 			await upload(page, '#file-input', c.xlsx);
 			await convert(page);
-			if (rejection) {
-				await expect(page.locator('.error')).toContainText(rejection.split('\n')[0]);
+			if (problems.length) {
+				await expect(page.locator('.error li')).toHaveText(problems);
 				await expect(page.locator('.result-box')).toHaveCount(0);
 				return;
 			}
@@ -94,16 +93,13 @@ for (const c of surveyCases()) {
 			expect(fromTsvDownload(text)).toBe(c.tsv);
 		});
 
-		test('Kobo → DDI: same XML as the library, or the rejection', async ({ page }) => {
+		test('Kobo → DDI: same XML as the library', async ({ page }) => {
 			await openTab(page, 'kobo');
 			await upload(page, '#kobo-xlsx', c.xlsx);
 			await setTitle(page, c.name);
 			await convert(page);
-			if (rejection) {
-				await expect(page.locator('.error')).toContainText(rejection.split('\n')[0]);
-				return;
-			}
-			const { surveyData, choicesData, settingsData } = parsed!;
+			await expect(page.locator('.error')).toHaveCount(0);
+			const { surveyData, choicesData, settingsData } = lenient;
 			const expected = settingsData.length
 				? buildDdiXml(surveyData, choicesData, { assetName: c.name, settings: settingsData[0] })
 				: c.ddi!;

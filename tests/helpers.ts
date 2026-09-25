@@ -27,16 +27,22 @@ export interface GoldenCase {
 
 type Rows = Record<string, unknown>[];
 
-/** Write `{survey, choices, settings}` JSON as an XLSForm workbook. */
+/** Read `{survey, choices, settings}` JSON and write it as an XLSForm workbook. */
+export type XlsForm = Partial<Record<'survey' | 'choices' | 'settings', Rows>>;
+
 function jsonToXlsx(jsonPath: string, outPath: string): string {
-	const form = JSON.parse(fs.readFileSync(jsonPath, 'utf-8')) as Record<string, Rows | undefined>;
+	return writeXlsForm(JSON.parse(fs.readFileSync(jsonPath, 'utf-8')) as XlsForm, outPath);
+}
+
+/** Write `{survey, choices, settings}` rows as an XLSForm workbook. */
+export function writeXlsForm(form: XlsForm, outPath: string): string {
 	const wb = XLSX.utils.book_new();
 	// survey and choices are required sheets even when empty.
 	const headers: Record<string, string[]> = {
 		survey: ['type', 'name', 'label'],
 		choices: ['list_name', 'name', 'label']
 	};
-	for (const sheet of ['survey', 'choices', 'settings']) {
+	for (const sheet of ['survey', 'choices', 'settings'] as const) {
 		const rows = form[sheet] ?? [];
 		if (!rows.length && !headers[sheet]) continue;
 		const ws = rows.length

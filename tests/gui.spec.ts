@@ -1,7 +1,17 @@
 /** Behaviour of the UI itself: states, wiring of options, keyboard, layout. */
 import { test, expect, type Page } from '@playwright/test';
 import * as path from 'node:path';
-import { LIB_ROOT, convert, download, fixture, openApp, openTab, upload } from './helpers';
+import {
+	LIB_ROOT,
+	convert,
+	download,
+	fixture,
+	openApp,
+	openTab,
+	upload,
+	writeXlsForm,
+	type XlsForm
+} from './helpers';
 
 const REJECTED_XLSX = path.join(LIB_ROOT, 'tests/fixtures/surveys/all_types_survey/xlsform.xlsx');
 
@@ -58,9 +68,69 @@ test('Kobo export with BOM, quoted multi-line field and ";" inside quotes', asyn
 test('a form outside the CDL subset is rejected with a message, no result', async ({ page }) => {
 	await upload(page, '#file-input', REJECTED_XLSX);
 	await convert(page);
-	await expect(page.locator('.error')).toContainText('LimeSurvey cannot represent');
+	await expect(page.locator('.error')).toContainText(
+		'Dieses Formular kann nicht umgewandelt werden'
+	);
+	// All findings at once, one per list item.
+	expect(await page.locator('.error li').count()).toBeGreaterThan(1);
 	await expect(page.locator('.result-box')).toHaveCount(0);
 	await expect(page.locator('.download-btn')).toHaveCount(0);
+});
+
+/** Upload a generated form on the TSV tab and return the error text. */
+async function tsvError(page: Page, form: XlsForm) {
+	const file = writeXlsForm(form, test.info().outputPath('form.xlsx'));
+	await upload(page, '#file-input', file);
+	await convert(page);
+	await expect(page.locator('.result-box')).toHaveCount(0);
+	return page.locator('.error');
+}
+
+const often = { type: 'select_one freq', name: 'often', label: 'How often?' };
+
+test('rejects a select whose choice list does not exist, naming the question', async ({ page }) => {
+	const error = await tsvError(page, {
+		survey: [often],
+		choices: [{ list_name: 'other', name: 'a', label: 'A' }]
+	});
+	await expect(error).toContainText('often');
+	await expect(error).toContainText('freq');
+});
+
+test('rejects duplicate answer codes in a list, naming the list', async ({ page }) => {
+	const error = await tsvError(page, {
+		survey: [often],
+		choices: [
+			{ list_name: 'freq', name: 'a', label: 'Always' },
+			{ list_name: 'freq', name: 'a', label: 'Again' }
+		]
+	});
+	await expect(error).toContainText('"a"');
+	await expect(error).toContainText('freq');
+});
+
+test('Kobo tab keeps Kobo-style names the TSV tab rejects', async ({ page }) => {
+	const file = writeXlsForm(
+		{
+			survey: [{ type: 'select_one freq', name: 'how_often_do_you_visit', label: 'How often?' }],
+			choices: [
+				{ list_name: 'freq', name: 'sometimes', label: 'Sometimes' },
+				{ list_name: 'freq', name: 'never', label: 'Never' }
+			]
+		},
+		test.info().outputPath('kobo.xlsx')
+	);
+	await upload(page, '#file-input', file);
+	await convert(page);
+	await expect(page.locator('.error li').first()).toContainText('how_often_do_you_visit');
+
+	await openTab(page, 'kobo');
+	await upload(page, '#kobo-xlsx', file);
+	await convert(page);
+	await expect(page.locator('.error')).toHaveCount(0);
+	const { text } = await download(page);
+	expect(text).toContain('name="how_often_do_you_visit"');
+	expect(text).toContain('sometimes');
 });
 
 test('choosing a new file clears the previous result', async ({ page }) => {

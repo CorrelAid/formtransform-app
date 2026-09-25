@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { XLSFormParser } from '@correlaid/formtransform';
+	import { XLSFormParser, XLSLoader, XLSValidator } from '@correlaid/formtransform';
+	import { errorMessage } from '$lib/errors';
 	import { marked } from 'marked';
 	import { locale, t } from '$lib/i18n';
 	import { content } from 'virtual:cdl-content';
@@ -12,6 +13,8 @@
 	let file = $state<File | null>(null);
 	let converting = $state(false);
 	let error = $state<string | null>(null);
+	/** Every subset violation in the form, shown as a list instead of one error. */
+	let issues = $state<string[]>([]);
 	let tsvContent = $state<string | null>(null);
 	let stats = $state<{ questions: number; groups: number } | null>(null);
 
@@ -39,6 +42,7 @@
 
 		converting = true;
 		error = null;
+		issues = [];
 		tsvContent = null;
 		stats = null;
 
@@ -48,14 +52,17 @@
 				throw new Error('XLSForm conversion can only be performed in a browser environment');
 			}
 
-			// Mock alert if it's not available in the current context (moved from xlsform-converter.js)
-			if (typeof globalThis.alert === 'undefined') {
-				globalThis.alert = () => {};
-			}
+			const arrayBuffer = await file.arrayBuffer();
 
-			const arrayBuffer = await file.arrayBuffer(); // Convert File to ArrayBuffer
+			// Report every problem at once; the converter would stop at the first.
+			const { surveyData, choicesData } = XLSLoader.parseXLSData(arrayBuffer, {
+				skipValidation: true
+			});
+			issues = XLSValidator.validateSubset(surveyData, choicesData)
+				.filter((v) => v.severity === 'error')
+				.map((v) => v.message);
+			if (issues.length) return;
 
-			// Use the client-side converter directly
 			tsvContent = await XLSFormParser.convertXLSDataToTSV(arrayBuffer, config);
 
 			// Calculate stats if tsvContent is not null
@@ -70,7 +77,7 @@
 				};
 			}
 		} catch (e) {
-			error = `Conversion failed: ${e}`;
+			error = errorMessage(e);
 			console.error(e);
 		} finally {
 			converting = false;
@@ -216,7 +223,16 @@
 				</button>
 			</div>
 
-			{#if error}
+			{#if issues.length}
+				<div class="error">
+					<strong>{$t('page.issues')}</strong>
+					<ul>
+						{#each issues as issue, i (i)}
+							<li>{issue}</li>
+						{/each}
+					</ul>
+				</div>
+			{:else if error}
 				<div class="error">
 					<strong>{$t('page.error')}</strong>
 					{error}
@@ -400,12 +416,18 @@
 	}
 
 	.error {
+		white-space: pre-line;
 		padding: 1rem;
 		background: #ffebee;
 		border-left: 4px solid #f44336;
 		color: #c62828;
 		border-radius: var(--radius-md);
 		margin-bottom: 1rem;
+	}
+	.error ul {
+		white-space: normal;
+		margin: 0.5rem 0 0;
+		padding-left: 1.25rem;
 	}
 
 	.result-box {
