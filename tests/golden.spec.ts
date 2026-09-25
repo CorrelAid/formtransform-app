@@ -36,11 +36,6 @@ for (const c of registryCases()) {
 	test.describe(`registry type: ${c.name}`, () => {
 		test('XLSForm → TSV matches blessed tsv.tsv', async ({ page }) => {
 			test.skip(!c.tsv, 'no blessed tsv.tsv');
-			// The browser entry cannot resolve select_*_from_file vocabularies yet.
-			test.fail(
-				c.name.endsWith('_long_list'),
-				'https://github.com/CorrelAid/formtransform/issues/24'
-			);
 			await upload(page, '#file-input', c.xlsx);
 			await convert(page);
 			await expect(page.locator('.error')).toHaveCount(0);
