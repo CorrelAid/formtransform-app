@@ -38,6 +38,24 @@ function jsonToXlsx(jsonPath: string, outPath: string): string {
 }
 
 /** Write `{survey, choices, settings}` rows as an XLSForm workbook. */
+/**
+ * Fixture JSON stores translations as the loader returns them
+ * (`label: { en, es }` plus `_languages`); a sheet spells them as
+ * `label::en`, `label::es` columns.
+ */
+function toSheetRow(row: Record<string, unknown>): Record<string, unknown> {
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(row)) {
+		if (key === '_languages') continue;
+		if (value !== null && typeof value === 'object') {
+			for (const [lang, text] of Object.entries(value)) out[`${key}::${lang}`] = text;
+		} else {
+			out[key] = value;
+		}
+	}
+	return out;
+}
+
 export function writeXlsForm(form: XlsForm, outPath: string): string {
 	const wb = XLSX.utils.book_new();
 	// survey and choices are required sheets even when empty.
@@ -49,7 +67,7 @@ export function writeXlsForm(form: XlsForm, outPath: string): string {
 		const rows = form[sheet] ?? [];
 		if (!rows.length && !headers[sheet]) continue;
 		const ws = rows.length
-			? XLSX.utils.json_to_sheet(rows)
+			? XLSX.utils.json_to_sheet(rows.map(toSheetRow))
 			: XLSX.utils.aoa_to_sheet([headers[sheet]]);
 		XLSX.utils.book_append_sheet(wb, ws, sheet);
 	}

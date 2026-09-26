@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import {
-		XLSLoader,
-		XLSValidator,
-		xlsformToLstsv,
-		type Diagnostic
-	} from '@correlaid/formtransform';
+	import { xlsformToLstsv, type Diagnostic } from '@correlaid/formtransform';
 	import { describeFailure, messages } from '$lib/errors';
 	import { marked } from 'marked';
 	import { locale, t } from '$lib/i18n';
@@ -55,6 +50,8 @@
 		tsvContent = null;
 		stats = null;
 
+		// Subset warnings arrive through onWarning, also when the form is rejected.
+		const findings: Diagnostic[] = [];
 		try {
 			// Ensure we're running in a browser environment
 			if (!browser) {
@@ -63,22 +60,11 @@
 
 			const arrayBuffer = await file.arrayBuffer();
 
-			// Check first: xlsformToLstsv stops at the first problem and skips some
-			// checks (e.g. references to unknown questions).
-			const { surveyData, choicesData } = XLSLoader.parseXLSData(arrayBuffer, {
-				skipValidation: true
-			});
-			const findings: Diagnostic[] = XLSValidator.validateSubset(surveyData, choicesData, {
-				target: 'lstsv'
-			});
-			issues = messages(findings, 'error');
-			if (issues.length) return;
-
+			// Checks the LimeSurvey subset and throws with every finding in details.
 			tsvContent = await xlsformToLstsv(arrayBuffer, {
 				...config,
 				onWarning: (w) => findings.push(w)
 			});
-			warnings = messages(findings, 'warning');
 
 			// Calculate stats if tsvContent is not null
 			if (tsvContent) {
@@ -95,6 +81,7 @@
 			({ error, issues } = describeFailure(e));
 			console.error(e);
 		} finally {
+			warnings = messages(findings, 'warning');
 			converting = false;
 		}
 	}

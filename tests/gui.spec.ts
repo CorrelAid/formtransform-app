@@ -186,6 +186,20 @@ test('converts but lists warnings, e.g. a comparison that is never true', async 
 	}
 });
 
+test('TSV tab lists every problem at once, including a dangling reference', async ({ page }) => {
+	const error = await tsvError(page, {
+		survey: [
+			{ type: 'geopoint', name: 'where', label: 'Where?' },
+			{ type: 'text', name: 'full_name', label: 'Name', relevant: '${nope} = 1' }
+		],
+		choices: []
+	});
+	await expect(error.locator('li')).toHaveCount(3);
+	await expect(error).toContainText('geopoint');
+	await expect(error).toContainText('full_name');
+	await expect(error).toContainText('nope');
+});
+
 test('choosing a new file clears the previous result', async ({ page }) => {
 	await upload(page, '#file-input', fixture('minimal.xlsx'));
 	await convert(page);

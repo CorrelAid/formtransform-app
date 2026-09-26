@@ -2,7 +2,6 @@
 	import { browser } from '$app/environment';
 	import {
 		XLSLoader,
-		XLSValidator,
 		xlsformToDdi,
 		extractVariables,
 		choicesByListFromRows,
@@ -47,19 +46,15 @@
 		warnings = [];
 		result = null;
 		progress = null;
+		const findings: Diagnostic[] = [];
 		try {
 			// LimeSurvey's naming rules (short alphanumeric names and codes) don't
 			// apply to DDI, which keeps Kobo names as they are; the TSV tab stays strict.
 			const xlsx = await xlsxFile.arrayBuffer();
 			const form = XLSLoader.parseXLSData(xlsx, { skipValidation: true });
 			// xlsformToDdi checks the DDI subset itself (registered types, resolvable
-			// lists, unique names, no LimeSurvey length limits) and throws with every
-			// finding; its warnings come only from validateSubset.
-			const findings: Diagnostic[] = XLSValidator.validateSubset(
-				form.surveyData,
-				form.choicesData,
-				{ target: 'ddi' }
-			);
+			// lists, unique names, no LimeSurvey length limits), throws with every
+			// finding in details, and reports warnings through onWarning.
 			const options = {
 				assetName: title || undefined,
 				onWarning: (w: Diagnostic) => findings.push(w)
@@ -75,11 +70,11 @@
 				const xml = xlsformToDdi(form, { ...options, submissions });
 				result = { xml, csv: buildDataCsv(variables, submissions) };
 			}
-			warnings = messages(findings, 'warning');
 		} catch (e) {
 			({ error, issues } = describeFailure(e));
 			console.error(e);
 		} finally {
+			warnings = messages(findings, 'warning');
 			converting = false;
 			progress = null;
 		}
