@@ -9,7 +9,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { XLSLoader, XLSValidator, buildDdiXml, lstsvToDdiXml } from '@correlaid/formtransform';
+import { XLSLoader, XLSValidator, lstsvToDdi, xlsformToDdi } from '@correlaid/formtransform';
 import {
 	convert,
 	download,
@@ -109,7 +109,7 @@ for (const c of surveyCases()) {
 			await expect(page.locator('.error')).toHaveCount(0);
 			const { surveyData, choicesData, settingsData } = lenient;
 			const expected = settingsData.length
-				? buildDdiXml(surveyData, choicesData, { assetName: c.name, settings: settingsData[0] })
+				? xlsformToDdi({ surveyData, choicesData, settingsData }, { assetName: c.name })
 				: c.ddi!;
 			const { text } = await download(page);
 			expect(scrubProdDate(text)).toBe(scrubProdDate(expected));
@@ -123,7 +123,7 @@ for (const c of surveyCases()) {
 			await convert(page);
 			await expect(page.locator('.error')).toHaveCount(0);
 			const { text } = await download(page);
-			expect(scrubProdDate(text)).toBe(scrubProdDate(lstsvToDdiXml(c.tsv!, { assetName: c.name })));
+			expect(scrubProdDate(text)).toBe(scrubProdDate(lstsvToDdi(c.tsv!, { assetName: c.name })));
 		});
 	});
 }

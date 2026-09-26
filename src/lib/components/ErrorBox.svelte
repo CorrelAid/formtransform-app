@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { t } from '$lib/i18n';
 
-	/** Subset violations, listed one per line; take precedence over `error`. */
-	let { error = null, issues = [] }: { error?: string | null; issues?: string[] } = $props();
+	/**
+	 * `issues` (blocking, listed) take precedence over `error` (one message).
+	 * `warnings` don't block and are shown alongside a result.
+	 */
+	let {
+		error = null,
+		issues = [],
+		warnings = []
+	}: { error?: string | null; issues?: string[]; warnings?: string[] } = $props();
 </script>
 
 {#if issues.length}
-	<div class="error" role="alert">
+	<div class="box error" role="alert">
 		<strong>{$t('page.issues')}</strong>
 		<ul>
 			{#each issues as issue, i (i)}
@@ -15,18 +22,36 @@
 		</ul>
 	</div>
 {:else if error}
-	<div class="error" role="alert"><strong>{$t('page.error')}</strong> {error}</div>
+	<div class="box error" role="alert"><strong>{$t('page.error')}</strong> {error}</div>
+{/if}
+
+{#if warnings.length}
+	<div class="box warnings" role="status">
+		<strong>{$t('page.warnings')}</strong>
+		<ul>
+			{#each warnings as warning, i (i)}
+				<li>{warning}</li>
+			{/each}
+		</ul>
+	</div>
 {/if}
 
 <style>
-	.error {
+	.box {
 		white-space: pre-line;
 		padding: 1rem;
+		border-radius: var(--radius-md);
+		margin-bottom: 1rem;
+	}
+	.error {
 		background: #ffebee;
 		border-left: 4px solid #f44336;
 		color: #c62828;
-		border-radius: var(--radius-md);
-		margin-bottom: 1rem;
+	}
+	.warnings {
+		background: #fff8e1;
+		border-left: 4px solid #f9a825;
+		color: #5d4037;
 	}
 	ul {
 		white-space: normal;

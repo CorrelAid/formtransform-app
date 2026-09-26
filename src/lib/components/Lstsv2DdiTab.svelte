@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { lstsvToDdiXml } from '@correlaid/formtransform';
+	import { lstsvToDdi } from '@correlaid/formtransform';
 	import { t } from '$lib/i18n';
-	import { errorMessage } from '$lib/errors';
+	import { describeFailure } from '$lib/errors';
 	import ErrorBox from './ErrorBox.svelte';
 
 	let tsvFile = $state<File | null>(null);
 	let title = $state('');
 	let converting = $state(false);
 	let error = $state<string | null>(null);
+	let issues = $state<string[]>([]);
 	let result = $state<{ xml: string } | null>(null);
 
 	function pickTsv(e: Event) {
@@ -22,13 +23,14 @@
 		if (!tsvFile || !browser) return;
 		converting = true;
 		error = null;
+		issues = [];
 		result = null;
 		try {
 			const tsv = await tsvFile.text();
-			const xml = lstsvToDdiXml(tsv, { assetName: title || undefined });
+			const xml = lstsvToDdi(tsv, { assetName: title || undefined });
 			result = { xml };
 		} catch (e) {
-			error = errorMessage(e);
+			({ error, issues } = describeFailure(e));
 			console.error(e);
 		} finally {
 			converting = false;
@@ -80,7 +82,7 @@
 	</button>
 </div>
 
-<ErrorBox {error} />
+<ErrorBox {error} {issues} />
 
 {#if result}
 	<div class="result-box">

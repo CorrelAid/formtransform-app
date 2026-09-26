@@ -2,16 +2,17 @@
 	import { browser } from '$app/environment';
 	import {
 		XLSLoader,
-		buildDdiXml,
+		XLSValidator,
+		xlsformToDdi,
 		extractVariables,
 		choicesByListFromRows,
 		buildDataCsv,
 		parseResponses,
-		XLSValidator
+		type Diagnostic
 	} from '@correlaid/formtransform';
 	import ErrorBox from './ErrorBox.svelte';
 	import { t } from '$lib/i18n';
-	import { errorMessage } from '$lib/errors';
+	import { describeFailure, messages } from '$lib/errors';
 
 	let xlsxFile = $state<File | null>(null);
 	let csvFile = $state<File | null>(null);
@@ -20,6 +21,7 @@
 	let progress = $state<string | null>(null);
 	let error = $state<string | null>(null);
 	let issues = $state<string[]>([]);
+	let warnings = $state<string[]>([]);
 	let result = $state<{ xml: string; csv: string | null } | null>(null);
 
 	let mode = $derived(csvFile ? 'full' : 'metadata');
@@ -42,40 +44,40 @@
 		converting = true;
 		error = null;
 		issues = [];
+		warnings = [];
 		result = null;
 		progress = null;
 		try {
 			// LimeSurvey's naming rules (short alphanumeric names and codes) don't
 			// apply to DDI, which keeps Kobo names as they are; the TSV tab stays strict.
 			const xlsx = await xlsxFile.arrayBuffer();
-			const { surveyData, choicesData, settingsData } = XLSLoader.parseXLSData(xlsx, {
-				skipValidation: true
-			});
-			// The DDI subset: registered types, resolvable lists, unique names, but
-			// no LimeSurvey length limits. buildDdiXml does not validate by itself.
-			issues = XLSValidator.validateSubset(surveyData, choicesData, { target: 'ddi' })
-				.filter((v) => v.severity === 'error')
-				.map((v) => v.message);
-			if (issues.length) return;
+			const form = XLSLoader.parseXLSData(xlsx, { skipValidation: true });
+			// xlsformToDdi checks the DDI subset itself (registered types, resolvable
+			// lists, unique names, no LimeSurvey length limits) and throws with every
+			// finding; its warnings come only from validateSubset.
+			const findings: Diagnostic[] = XLSValidator.validateSubset(
+				form.surveyData,
+				form.choicesData,
+				{ target: 'ddi' }
+			);
+			const options = {
+				assetName: title || undefined,
+				onWarning: (w: Diagnostic) => findings.push(w)
+			};
 			if (mode === 'metadata') {
-				const xml = buildDdiXml(surveyData, choicesData, {
-					assetName: title || undefined,
-					settings: settingsData[0]
-				});
-				result = { xml, csv: null };
+				result = { xml: xlsformToDdi(form, options), csv: null };
 			} else {
 				const submissions = parseResponses(await csvFile!.text(), csvFile!.name);
-				const variables = extractVariables(surveyData, choicesByListFromRows(choicesData));
-				const xml = buildDdiXml(surveyData, choicesData, {
-					assetName: title || undefined,
-					settings: settingsData[0],
-					submissions
-				});
-				const csv = buildDataCsv(variables, submissions);
-				result = { xml, csv };
+				const variables = extractVariables(
+					form.surveyData,
+					choicesByListFromRows(form.choicesData)
+				);
+				const xml = xlsformToDdi(form, { ...options, submissions });
+				result = { xml, csv: buildDataCsv(variables, submissions) };
 			}
+			warnings = messages(findings, 'warning');
 		} catch (e) {
-			error = errorMessage(e);
+			({ error, issues } = describeFailure(e));
 			console.error(e);
 		} finally {
 			converting = false;
@@ -150,7 +152,7 @@
 	</button>
 </div>
 
-<ErrorBox {error} {issues} />
+<ErrorBox {error} {issues} {warnings} />
 
 {#if result}
 	<div class="result-box">

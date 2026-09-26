@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { XLSFormParser, XLSLoader, XLSValidator } from '@correlaid/formtransform';
-	import { errorMessage } from '$lib/errors';
+	import {
+		XLSLoader,
+		XLSValidator,
+		xlsformToLstsv,
+		type Diagnostic
+	} from '@correlaid/formtransform';
+	import { describeFailure, messages } from '$lib/errors';
 	import { marked } from 'marked';
 	import { locale, t } from '$lib/i18n';
 	import { content } from 'virtual:cdl-content';
@@ -16,6 +21,8 @@
 	let error = $state<string | null>(null);
 	/** Every subset violation in the form, shown as a list instead of one error. */
 	let issues = $state<string[]>([]);
+	/** Non-blocking findings, shown next to the result. */
+	let warnings = $state<string[]>([]);
 	let tsvContent = $state<string | null>(null);
 	let stats = $state<{ questions: number; groups: number } | null>(null);
 
@@ -44,6 +51,7 @@
 		converting = true;
 		error = null;
 		issues = [];
+		warnings = [];
 		tsvContent = null;
 		stats = null;
 
@@ -55,16 +63,22 @@
 
 			const arrayBuffer = await file.arrayBuffer();
 
-			// Report every problem at once; the converter would stop at the first.
+			// Check first: xlsformToLstsv stops at the first problem and skips some
+			// checks (e.g. references to unknown questions).
 			const { surveyData, choicesData } = XLSLoader.parseXLSData(arrayBuffer, {
 				skipValidation: true
 			});
-			issues = XLSValidator.validateSubset(surveyData, choicesData, { target: 'lstsv' })
-				.filter((v) => v.severity === 'error')
-				.map((v) => v.message);
+			const findings: Diagnostic[] = XLSValidator.validateSubset(surveyData, choicesData, {
+				target: 'lstsv'
+			});
+			issues = messages(findings, 'error');
 			if (issues.length) return;
 
-			tsvContent = await XLSFormParser.convertXLSDataToTSV(arrayBuffer, config);
+			tsvContent = await xlsformToLstsv(arrayBuffer, {
+				...config,
+				onWarning: (w) => findings.push(w)
+			});
+			warnings = messages(findings, 'warning');
 
 			// Calculate stats if tsvContent is not null
 			if (tsvContent) {
@@ -78,7 +92,7 @@
 				};
 			}
 		} catch (e) {
-			error = errorMessage(e);
+			({ error, issues } = describeFailure(e));
 			console.error(e);
 		} finally {
 			converting = false;
@@ -224,7 +238,7 @@
 				</button>
 			</div>
 
-			<ErrorBox {error} {issues} />
+			<ErrorBox {error} {issues} {warnings} />
 
 			{#if tsvContent && stats && activeTab === 'tsv'}
 				<div class="result-box">

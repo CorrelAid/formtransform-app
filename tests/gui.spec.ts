@@ -158,6 +158,34 @@ test('Kobo tab rejects unregistered types, listing each', async ({ page }) => {
 	await expect(page.locator('.result-box')).toHaveCount(0);
 });
 
+test('converts but lists warnings, e.g. a comparison that is never true', async ({ page }) => {
+	const file = writeXlsForm(
+		{
+			survey: [
+				{ type: 'select_one yn', name: 'ok', label: 'OK?' },
+				{ type: 'text', name: 'why', label: 'Why?', relevant: "${ok} = 'maybe'" }
+			],
+			choices: [
+				{ list_name: 'yn', name: 'yes', label: 'Yes' },
+				{ list_name: 'yn', name: 'no', label: 'No' }
+			]
+		},
+		test.info().outputPath('never-true.xlsx')
+	);
+	for (const [tab, input] of [
+		['tsv', '#file-input'],
+		['kobo', '#kobo-xlsx']
+	] as const) {
+		await openTab(page, tab);
+		await upload(page, input, file);
+		await convert(page);
+		await expect(page.locator('.result-box')).toBeVisible();
+		await expect(page.locator('.error')).toHaveCount(0);
+		await expect(page.locator('.warnings')).toContainText('bitte diese Punkte prüfen');
+		await expect(page.locator('.warnings li')).toContainText(["'maybe' is not one of the choices"]);
+	}
+});
+
 test('choosing a new file clears the previous result', async ({ page }) => {
 	await upload(page, '#file-input', fixture('minimal.xlsx'));
 	await convert(page);
