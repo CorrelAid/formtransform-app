@@ -53,7 +53,19 @@ for (const c of registryCases()) {
 			await expect(page.locator('.error')).toHaveCount(0);
 			const { name, text } = await download(page);
 			expect(name).toBe('survey.xml');
-			expect(scrubProdDate(text)).toBe(scrubProdDate(c.ddi!));
+			const form = XLSLoader.parseXLSData(fs.readFileSync(c.xlsx), { skipValidation: true });
+			if (!form.settingsData.length) {
+				expect(scrubProdDate(text)).toBe(scrubProdDate(c.ddi!));
+				return;
+			}
+			// The blessed ddi.xml is built without the settings sheet; the app
+			// passes it, so default_language becomes codeBook/@xml:lang (#102).
+			expect(scrubProdDate(text)).toBe(
+				scrubProdDate(xlsformToDdi(form, { assetName: c.name, onWarning: () => {} }))
+			);
+			expect(scrubProdDate(text).replace(/(<codeBook\b[^>]*?) xml:lang="[^"]*"/, '$1')).toBe(
+				scrubProdDate(c.ddi!)
+			);
 		});
 
 		test('LimeSurvey → DDI matches blessed ddi.xml', async ({ page }) => {

@@ -71,8 +71,20 @@ export function writeXlsForm(form: XlsForm, outPath: string): string {
 			: XLSX.utils.aoa_to_sheet([headers[sheet]]);
 		XLSX.utils.book_append_sheet(wb, ws, sheet);
 	}
+	// Every Playwright worker runs this when it loads the specs. Write once and
+	// never replace: Chrome refuses a picked file that changed on disk ("could
+	// not be read") while another worker's page is uploading it.
+	if (fs.existsSync(outPath)) return outPath;
 	fs.mkdirSync(path.dirname(outPath), { recursive: true });
-	fs.writeFileSync(outPath, XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }));
+	const tmp = `${outPath}.${process.pid}.tmp`;
+	fs.writeFileSync(tmp, XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }));
+	try {
+		fs.linkSync(tmp, outPath); // atomic, fails if another worker was first
+	} catch (e) {
+		if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e;
+	} finally {
+		fs.unlinkSync(tmp);
+	}
 	return outPath;
 }
 
