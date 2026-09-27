@@ -200,6 +200,30 @@ test('TSV tab lists every problem at once, including a dangling reference', asyn
 	await expect(error).toContainText('nope');
 });
 
+test('Kobo full mode: notes and empty groups add no data columns', async ({ page }) => {
+	// Since formtransform v0.7.0, extractVariables also returns rows without
+	// data and empty-group markers; buildDataCsv must skip them.
+	const file = writeXlsForm(
+		{
+			survey: [
+				{ type: 'note', name: 'intro', label: 'Welcome' },
+				{ type: 'begin_group', name: 'empty', label: 'Empty' },
+				{ type: 'end_group', name: '', label: '' },
+				{ type: 'text', name: 'name', label: 'Name' }
+			],
+			choices: []
+		},
+		test.info().outputPath('notes.xlsx')
+	);
+	await openTab(page, 'kobo');
+	await upload(page, '#kobo-xlsx', file);
+	await page.locator('#kobo-csv').setInputFiles(fixture('kobo-comma.csv'));
+	await convert(page);
+	await expect(page.locator('.error')).toHaveCount(0);
+	const csv = await download(page, 1);
+	expect(csv.text).toBe('name\r\nAlice\r\nBob\r\n');
+});
+
 test('choosing a new file clears the previous result', async ({ page }) => {
 	await upload(page, '#file-input', fixture('minimal.xlsx'));
 	await convert(page);

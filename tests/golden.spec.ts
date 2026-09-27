@@ -59,24 +59,27 @@ for (const c of registryCases()) {
 				return;
 			}
 			// The blessed ddi.xml is built without the settings sheet; the app
-			// passes it, so default_language becomes codeBook/@xml:lang (#102).
+			// passes it (codeBook/@xml:lang, cdl:setting notes), so the oracle is
+			// the library's own output for the loaded form.
 			expect(scrubProdDate(text)).toBe(
 				scrubProdDate(xlsformToDdi(form, { assetName: c.name, onWarning: () => {} }))
 			);
-			expect(scrubProdDate(text).replace(/(<codeBook\b[^>]*?) xml:lang="[^"]*"/, '$1')).toBe(
-				scrubProdDate(c.ddi!)
-			);
 		});
 
-		test('LimeSurvey → DDI matches blessed ddi.xml', async ({ page }) => {
-			test.skip(!c.tsv || !c.ddi, 'needs tsv.tsv and ddi.xml');
+		test('LimeSurvey → DDI: same XML as the library', async ({ page }) => {
+			// Since v0.7.0 a TSV's DDI equals the blessed ddi.xml only up to what a
+			// TSV cannot hold (the library's lstsv2ddiRoundtrip test); here the
+			// oracle is the library's own output.
+			test.skip(!c.tsv, 'no blessed tsv.tsv');
 			await openTab(page, 'lime');
 			await upload(page, '#lime-tsv', path.join(c.dir, 'tsv.tsv'));
 			await setTitle(page, c.name);
 			await convert(page);
 			await expect(page.locator('.error')).toHaveCount(0);
 			const { text } = await download(page);
-			expect(scrubProdDate(text)).toBe(scrubProdDate(c.ddi!));
+			expect(scrubProdDate(text)).toBe(
+				scrubProdDate(lstsvToDdi(c.tsv!, { assetName: c.name, onWarning: () => {} }))
+			);
 		});
 	});
 }
